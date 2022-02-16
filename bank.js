@@ -77,19 +77,6 @@ let bank = [
   },
 ];
 
-let totalSum = () => {
-  let total = {};
-  bank.forEach((item => {
-    if (total[item.currencyType] === undefined) {
-      total[item.currencyType] = item.balance;
-    } else {
-      total[item.currencyType] += item.balance;
-    }
-  }))
-
-  return total;
-};
-
 let debtBank = function() {
   let duty = {};
   bank.forEach((item => {
@@ -105,8 +92,6 @@ let debtBank = function() {
   }))
  return duty;
 };
-debtBank();
-
 
 function assets()  {
   fetch("https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5")
@@ -118,25 +103,17 @@ function assets()  {
           item.balance /= res[0].buy;
         }
         sum += item.balance;
-      })
-      document.querySelector(".total").textContent = `Общее количество денег внутри банка - ${sum.toFixed(2)} $`
+      });
+      let obj = debtBank();
+      let totalSum = obj.USA + obj.UAH / res[0].buy;
+      document.querySelector(".total").textContent = `Общее количество денег внутри банка - ${sum.toFixed(2)} $`;
+      document.querySelector(".duty").textContent = `Сумма долга клиентов - ${totalSum.toFixed(2)} $`;
     });
 }
 assets();
-function duty()  {
-  fetch("https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5")
-    .then(data => data.json())
-    .then(res => {
 
-      let obj = debtBank();
-      let sum = obj.USA + obj.UAH / res[0].buy;
-
-      document.querySelector(".duty").textContent = `Сумма долга клиентов - ${sum.toFixed(2)} $`
-    });
-}
-duty();
-fetch("https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5")
-  .then(data => data.json())
-  .then(res => console.log(res))
+// fetch("https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5")
+//   .then(data => data.json())
+//   .then(res => console.log(res))
 
 
