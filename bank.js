@@ -76,30 +76,45 @@ let bank = [
         endActiveCard : '28.01.2023',
     },
 ];
-let totalSum = {};
-let debtBank = {};
 
-bank.forEach((item => {
-    if (totalSum[item.currencyType] === undefined) {
-        totalSum[item.currencyType] = item.balance
-    } else {
-        totalSum[item.currencyType] += item.balance
-    }
+let totalSum = () => {
+    let total = {};
+    bank.forEach((item => {
+        if (total[item.currencyType] === undefined) {
+            total[item.currencyType] = item.balance;
+        } else {
+            total[item.currencyType] += item.balance;
+        }
+    }))
 
-    if(item.bankAccount === 'credit') {
-        if((item.creditLimit - item.balance) > 0){
-            if (debtBank[item.currencyType] === undefined) {
-                debtBank[item.currencyType] = (item.creditLimit - item.balance)
-            } else {
-                debtBank[item.currencyType] += (item.creditLimit - item.balance)
+    return total;
+};
+
+let debtBank = function() {
+    let duty = {};
+    bank.forEach((item => {
+        if (item.bankAccount === 'credit') {
+            if((item.creditLimit - item.balance) > 0){
+                if (duty[item.currencyType] === undefined) {
+                    duty[item.currencyType] = (item.creditLimit - item.balance);
+                } else {
+                    duty[item.currencyType] += (item.creditLimit - item.balance);
+                }
             }
         }
-    }
+    }))
+    let total = 0;
+    let response = fetch("https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5")
+        .then(data => data.json())
+        .then(res => {
+           total = duty.USA + duty.UAH * res[0].buy;
+        })
 
-}))
+   return total
+};
 
-console.log(totalSum);
-console.log(debtBank);
+console.log(totalSum());
+console.log(debtBank());
 // fetch("https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5")
 //     .then(data => data.json())
 //     .then(res => console.log(res))
