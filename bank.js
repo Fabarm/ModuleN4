@@ -9,8 +9,7 @@ async function getExchangeRates() {
 
   return await res.json();
 }
-let a = getExchangeRates();
-console.log(a)
+
 class Customer {
   fullName;
   isActive;
@@ -33,6 +32,7 @@ class Customer {
       dateEndActive : date,
     });
   }
+
   setCreditAccount (date, balance, limit, currency) {
     this.creditAccount.push({
       currency : currency || "UAH",
@@ -43,16 +43,21 @@ class Customer {
   }
 }
 
-let customerOne  = new Customer('vasya', true, '12.09.2021');
-let customerTwo  = new Customer('petya', true, '12.09.2021');
-let customerThree  = new Customer('valya', false, '12.09.2021');
-let customerFour  = new Customer('masha', true, '12.09.2021');
-let customerFive  = new Customer('olya', true, '12.09.2021');
+let customerOne = new Customer('vasya', true, '12.09.2021');
+let customerTwo = new Customer('petya', true, '12.09.2021');
+let customerThree = new Customer('valya', false, '12.09.2021');
+let customerFour = new Customer('masha', true, '12.09.2021');
+let customerFive = new Customer('olya', true, '12.09.2021');
 customerOne.setDebitAccount('25.12.2023', 500);
 customerOne.setDebitAccount('25.12.2023', 500);
-customerOne.setDebitAccount('25.12.2023', 500)
-customerOne.setCreditAccount('25.12.2023', 150, 200);
-customerOne.setCreditAccount('25.12.2023', 250, 500)
+customerOne.setDebitAccount('25.12.2023', 500);
+customerTwo.setDebitAccount('25.12.2023', 5000, "RUR");
+customerThree.setDebitAccount('25.12.2023', 500, "USA");
+customerTwo.setDebitAccount('25.12.2023', 6000, "RUR");
+customerFour.setDebitAccount('25.12.2023', 500, "EUR");
+customerFive.setDebitAccount('25.12.2023', 500, "EUR");
+customerFour.setCreditAccount('25.12.2023', 150, 200);
+customerThree.setCreditAccount('25.12.2023', 250, 500)
 customerThree.setCreditAccount('25.12.2023', 150, 200);
 customerThree.setCreditAccount('25.12.2023', 250, 500);
 customerTwo.setCreditAccount('25.12.2023', 400, 500, "USA");
@@ -66,15 +71,15 @@ let creditDutyAllCustomers = async function() {
   let duty = 0;
   await getExchangeRates()
     .then(res => {
-      bank.forEach(((item)=> {
+      bank.forEach((item => {
         if (item.creditAccount.length) {
           item.creditAccount.forEach(item => {
             if (item.limit > item.balance){
-              if(item.currency === "UAH"){
+              if (item.currency === "UAH"){
                 duty += (item.limit - item.balance) / res[0].sale;
-              } else if(item.currency === "RUR"){
+              } else if (item.currency === "RUR"){
                 duty += (item.limit - item.balance) * res[2].sale / res[0].sale;
-              } else if(item.currency === "EUR"){
+              } else if (item.currency === "EUR"){
                 duty += (item.limit - item.balance) * res[1].sale / res[0].sale;
               } else {
                 duty += (item.limit - item.balance);
@@ -82,13 +87,52 @@ let creditDutyAllCustomers = async function() {
             }
           })
         }
-      }));
+      }))
     })
 
   return duty;
 };
 
-console.log(bank)
-console.log(creditDutyAllCustomers())
+let totalFunds  = async function() {
+  let cash = 0;
+  await getExchangeRates()
+    .then(res => {
+      bank.forEach((item => {
+        if (item.debitAccount.length) {
+          item.debitAccount.forEach(item => {
+              if (item.currency === "UAH"){
+                cash += item.balance / res[0].sale;
+              } else if (item.currency === "RUR"){
+                cash += item.balance * res[2].sale / res[0].sale;
+              } else if (item.currency === "EUR"){
+                cash += item.balance * res[1].sale / res[0].sale;
+              } else {
+                cash += item.balance;
+              }
+          })
+        }
 
+        if (item.creditAccount.length) {
+          item.creditAccount.forEach(item => {
+            if (item.limit < item.balance){
+              if (item.currency === "UAH"){
+                cash += (item.balance - item.limit) / res[0].sale;
+              } else if (item.currency === "RUR"){
+                cash += (item.balance - item.limit) * res[2].sale / res[0].sale;
+              } else if (item.currency === "EUR"){
+                cash += (item.balance - item.limit) * res[1].sale / res[0].sale;
+              } else {
+                cash += (item.balance - item.limit);
+              }
+            }
+          })
+        }
+      }))
+    })
+
+  return cash;
+};
+
+console.log(creditDutyAllCustomers())
+console.log(totalFunds())
 
