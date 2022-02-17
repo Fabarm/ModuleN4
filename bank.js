@@ -16,8 +16,7 @@ async function getExchangeRates() {
 
   return result;
 }
-// let a = getExchangeRates()
-// console.log(a)
+
 class Customer {
   fullName;
   isActive;
@@ -68,7 +67,7 @@ customerTwo.setCreditAccount('25.12.2023', 300, 500, "RUR");
 customerTwo.setCreditAccount('25.12.2023', 200, 500, "EUR");
 customerTwo.setCreditAccount('25.12.2023', 100, 500, 'USD');
 
-customerThree.setDebitAccount('25.12.2023', 500, "USA");
+customerThree.setDebitAccount('25.12.2023', 500, "USD");
 customerThree.setCreditAccount('25.12.2023', 250, 500, "UAH");
 customerThree.setCreditAccount('25.12.2023', 150, 200, "UAH");
 customerThree.setCreditAccount('25.12.2023', 250, 500, "UAH");
@@ -89,15 +88,8 @@ let creditDutyAllCustomers = async function() {
         if (item.creditAccount.length) {
           item.creditAccount.forEach(item => {
             if (item.limit > item.balance) {
-              if (item.currency === "UAH") {
-                duty += (item.limit - item.balance) / rates.USD.sale;
-              } else if (item.currency === "RUR") {
-                duty += (item.limit - item.balance) * rates.RUR.sale / rates.USD.sale;
-              } else if (item.currency === "EUR") {
-                duty += (item.limit - item.balance) * rates.EUR.sale / rates.USD.sale;
-              } else {
-                duty += (item.limit - item.balance);
-              }
+              let temp = (item.limit - item.balance) / rates.USD.sale;
+              item.currency !== "UAH" ? duty += temp * rates[item.currency].sale : duty += temp;
             }
           })
         }
@@ -115,30 +107,16 @@ let totalFunds = async function() {
       bank.forEach((customer => {
         if (customer.debitAccount.length) {
           customer.debitAccount.forEach(item => {
-            if (item.currency === "UAH") {
-              cash += item.balance / rates.USD.sale;
-            } else if (item.currency === "RUR") {
-              cash += item.balance * rates.RUR.sale / rates.USD.sale;
-            } else if (item.currency === "EUR") {
-              cash += item.balance * rates.EUR.sale / rates.USD.sale;
-            } else {
-              cash +=  item.balance;
-            }
+            let temp = item.balance / rates.USD.sale;
+            item.currency !== "UAH" ? cash += temp * rates[item.currency].sale : cash += temp;
           })
         }
 
         if (customer.creditAccount.length) {
           customer.creditAccount.forEach(item => {
             if (item.limit < item.balance) {
-              if (item.currency === "UAH") {
-                cash += (item.limit - item.balance) / rates.USD.sale;
-              } else if (item.currency === "RUR") {
-                cash += (item.limit - item.balance) * rates.RUR.sale / rates.USD.sale;
-              } else if (item.currency === "EUR") {
-                cash += (item.limit - item.balance) * rates.EUR.sale / rates.USD.sale;
-              } else {
-                cash += (item.limit - item.balance);
-              }
+              let temp = (item.limit - item.balance) / rates.USD.sale;
+              item.currency !== "UAH" ? cash += temp * rates[item.currency].sale : cash += temp;
             }
           })
         }
@@ -174,15 +152,8 @@ let sumCreditDutyCustomers = async function (isActive) {
         if (customer.isActive === isActive && customer.creditAccount.length > 0) {
           customer.creditAccount.forEach(item => {
             if (item.limit > item.balance) {
-              if (item.currency === "UAH") {
-                sum += (item.limit - item.balance) / rates.USD.sale;
-              } else if (item.currency === "RUR") {
-                sum += (item.limit - item.balance) * rates.RUR.sale / rates.USD.sale;
-              } else if (item.currency === "EUR") {
-                sum += (item.limit - item.balance) * rates.EUR.sale / rates.USD.sale;
-              } else {
-                sum += (item.limit - item.balance);
-              }
+              let temp = (item.limit - item.balance) / rates.USD.sale;
+              item.currency !== "UAH" ? sum += temp * rates[item.currency].sale : sum += temp;
             }
           })
         }
@@ -191,6 +162,3 @@ let sumCreditDutyCustomers = async function (isActive) {
 
   return sum;
 };
-
-console.log(sumCreditDutyCustomers(false));
-
