@@ -47,23 +47,27 @@ let customerOne = new Customer('vasya', true, '12.09.2021');
 let customerTwo = new Customer('petya', true, '12.09.2021');
 let customerThree = new Customer('valya', false, '12.09.2021');
 let customerFour = new Customer('masha', true, '12.09.2021');
-let customerFive = new Customer('olya', true, '12.09.2021');
+let customerFive = new Customer('olya', false, '12.09.2021');
 customerOne.setDebitAccount('25.12.2023', 500);
 customerOne.setDebitAccount('25.12.2023', 500);
 customerOne.setDebitAccount('25.12.2023', 500);
+
 customerTwo.setDebitAccount('25.12.2023', 5000, "RUR");
-customerThree.setDebitAccount('25.12.2023', 500, "USA");
 customerTwo.setDebitAccount('25.12.2023', 6000, "RUR");
-customerFour.setDebitAccount('25.12.2023', 500, "EUR");
-customerFive.setDebitAccount('25.12.2023', 500, "EUR");
-customerFour.setCreditAccount('25.12.2023', 150, 200);
-customerThree.setCreditAccount('25.12.2023', 250, 500)
-customerThree.setCreditAccount('25.12.2023', 150, 200);
-customerThree.setCreditAccount('25.12.2023', 250, 500);
 customerTwo.setCreditAccount('25.12.2023', 400, 500, "USA");
 customerTwo.setCreditAccount('25.12.2023', 300, 500, "RUR");
 customerTwo.setCreditAccount('25.12.2023', 200, 500, "EUR");
 customerTwo.setCreditAccount('25.12.2023', 100, 500, 'USA');
+
+customerThree.setDebitAccount('25.12.2023', 500, "USA");
+customerThree.setCreditAccount('25.12.2023', 250, 500);
+customerThree.setCreditAccount('25.12.2023', 150, 200);
+customerThree.setCreditAccount('25.12.2023', 250, 500);
+
+customerFour.setDebitAccount('25.12.2023', 500, "EUR");
+customerFour.setCreditAccount('25.12.2023', 150, 200);
+
+customerFive.setDebitAccount('25.12.2023', 500, "EUR");
 
 bank.push(customerOne,customerTwo,customerThree,customerFour,customerFive);
 
@@ -74,12 +78,12 @@ let creditDutyAllCustomers = async function() {
       bank.forEach((item => {
         if (item.creditAccount.length) {
           item.creditAccount.forEach(item => {
-            if (item.limit > item.balance){
-              if (item.currency === "UAH"){
+            if (item.limit > item.balance) {
+              if (item.currency === "UAH") {
                 duty += (item.limit - item.balance) / res[0].sale;
-              } else if (item.currency === "RUR"){
+              } else if (item.currency === "RUR") {
                 duty += (item.limit - item.balance) * res[2].sale / res[0].sale;
-              } else if (item.currency === "EUR"){
+              } else if (item.currency === "EUR") {
                 duty += (item.limit - item.balance) * res[1].sale / res[0].sale;
               } else {
                 duty += (item.limit - item.balance);
@@ -96,31 +100,31 @@ let creditDutyAllCustomers = async function() {
 let totalFunds  = async function() {
   let cash = 0;
   await getExchangeRates()
-    .then(res => {
-      bank.forEach((item => {
-        if (item.debitAccount.length) {
-          item.debitAccount.forEach(item => {
-              if (item.currency === "UAH"){
-                cash += item.balance / res[0].sale;
-              } else if (item.currency === "RUR"){
-                cash += item.balance * res[2].sale / res[0].sale;
-              } else if (item.currency === "EUR"){
-                cash += item.balance * res[1].sale / res[0].sale;
+    .then(result => {
+      bank.forEach((customer => {
+        if (customer.debitAccount.length) {
+          customer.debitAccount.forEach(item => {
+              if (item.currency === "UAH") {
+                cash += item.balance / result[0].sale;
+              } else if (item.currency === "RUR") {
+                cash += item.balance * result[2].sale / result[0].sale;
+              } else if (item.currency === "EUR") {
+                cash += item.balance * result[1].sale / result[0].sale;
               } else {
                 cash += item.balance;
               }
           })
         }
 
-        if (item.creditAccount.length) {
-          item.creditAccount.forEach(item => {
-            if (item.limit < item.balance){
-              if (item.currency === "UAH"){
-                cash += (item.balance - item.limit) / res[0].sale;
-              } else if (item.currency === "RUR"){
-                cash += (item.balance - item.limit) * res[2].sale / res[0].sale;
-              } else if (item.currency === "EUR"){
-                cash += (item.balance - item.limit) * res[1].sale / res[0].sale;
+        if (customer.creditAccount.length) {
+          customer.creditAccount.forEach(item => {
+            if (item.limit < item.balance) {
+              if (item.currency === "UAH") {
+                cash += (item.balance - item.limit) / result[0].sale;
+              } else if (item.currency === "RUR") {
+                cash += (item.balance - item.limit) * result[2].sale / result[0].sale;
+              } else if (item.currency === "EUR") {
+                cash += (item.balance - item.limit) * result[1].sale / result[0].sale;
               } else {
                 cash += (item.balance - item.limit);
               }
@@ -133,6 +137,19 @@ let totalFunds  = async function() {
   return cash;
 };
 
-console.log(creditDutyAllCustomers())
-console.log(totalFunds())
+function amountCustomersDebtors(status) {
+  let amount = 0;
+  bank.forEach(customer => {
+    if (customer.isActive === status){
+      for (let i = 0; i < customer.creditAccount.length; i++){
+        if (customer.creditAccount[i].limit > customer.creditAccount[i].balance) {
+          amount ++;
+          break;
+        }
+      }
+    }
+  })
+
+  return amount;
+}
 
