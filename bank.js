@@ -63,10 +63,10 @@ customerOne.setDebitAccount('25.12.2023', 500, "UAH");
 
 customerTwo.setDebitAccount('25.12.2023', 5000, "RUR");
 customerTwo.setDebitAccount('25.12.2023', 6000, "RUR");
-customerTwo.setCreditAccount('25.12.2023', 400, 500, "USA");
+customerTwo.setCreditAccount('25.12.2023', 400, 500, "USD");
 customerTwo.setCreditAccount('25.12.2023', 300, 500, "RUR");
 customerTwo.setCreditAccount('25.12.2023', 200, 500, "EUR");
-customerTwo.setCreditAccount('25.12.2023', 100, 500, 'USA');
+customerTwo.setCreditAccount('25.12.2023', 100, 500, 'USD');
 
 customerThree.setDebitAccount('25.12.2023', 500, "USA");
 customerThree.setCreditAccount('25.12.2023', 250, 500, "UAH");
@@ -74,7 +74,7 @@ customerThree.setCreditAccount('25.12.2023', 150, 200, "UAH");
 customerThree.setCreditAccount('25.12.2023', 250, 500, "UAH");
 
 customerFour.setDebitAccount('25.12.2023', 500, "EUR");
-customerFour.setCreditAccount('25.12.2023', 150, 200, "USA");
+customerFour.setCreditAccount('25.12.2023', 150, 200, "USD");
 
 customerFive.setDebitAccount('25.12.2023', 500, "EUR");
 
@@ -106,24 +106,24 @@ let creditDutyAllCustomers = async function() {
 
   return duty;
 };
-console.log(creditDutyAllCustomers())
-let totalFunds  = async function() {
+
+let totalFunds = async function() {
   let cash = 0;
 
   await getExchangeRates()
-    .then(result => {
+    .then(rates => {
       bank.forEach((customer => {
         if (customer.debitAccount.length) {
           customer.debitAccount.forEach(item => {
-              if (item.currency === "UAH") {
-                cash += item.balance / result[0].sale;
-              } else if (item.currency === "RUR") {
-                cash += item.balance * result[2].sale / result[0].sale;
-              } else if (item.currency === "EUR") {
-                cash += item.balance * result[1].sale / result[0].sale;
-              } else {
-                cash += item.balance;
-              }
+            if (item.currency === "UAH") {
+              cash += item.balance / rates.USD.sale;
+            } else if (item.currency === "RUR") {
+              cash += item.balance * rates.RUR.sale / rates.USD.sale;
+            } else if (item.currency === "EUR") {
+              cash += item.balance * rates.EUR.sale / rates.USD.sale;
+            } else {
+              cash +=  item.balance;
+            }
           })
         }
 
@@ -131,13 +131,13 @@ let totalFunds  = async function() {
           customer.creditAccount.forEach(item => {
             if (item.limit < item.balance) {
               if (item.currency === "UAH") {
-                cash += (item.balance - item.limit) / result[0].sale;
+                cash += (item.limit - item.balance) / rates.USD.sale;
               } else if (item.currency === "RUR") {
-                cash += (item.balance - item.limit) * result[2].sale / result[0].sale;
+                cash += (item.limit - item.balance) * rates.RUR.sale / rates.USD.sale;
               } else if (item.currency === "EUR") {
-                cash += (item.balance - item.limit) * result[1].sale / result[0].sale;
+                cash += (item.limit - item.balance) * rates.EUR.sale / rates.USD.sale;
               } else {
-                cash += (item.balance - item.limit);
+                cash += (item.limit - item.balance);
               }
             }
           })
@@ -148,12 +148,12 @@ let totalFunds  = async function() {
   return cash;
 };
 
-function amountCustomersDebtors(status) {
+let amountCustomersDebtors = function (status) {
   let amount = 0;
 
   bank.forEach(customer => {
-    if (customer.isActive === status){
-      for (let i = 0; i < customer.creditAccount.length; i++){
+    if (customer.isActive === status) {
+      for (let i = 0; i < customer.creditAccount.length; i++) {
         if (customer.creditAccount[i].limit > customer.creditAccount[i].balance) {
           amount++;
           break;
@@ -163,23 +163,23 @@ function amountCustomersDebtors(status) {
   })
 
   return amount;
-}
+};
 
-async function sumCreditDutyCustomers(isActive) {
+let sumCreditDutyCustomers = async function (isActive) {
   let sum = 0;
 
   await getExchangeRates()
-    .then(result => {
+    .then(rates => {
       bank.forEach((customer => {
         if (customer.isActive === isActive && customer.creditAccount.length > 0) {
           customer.creditAccount.forEach(item => {
             if (item.limit > item.balance) {
               if (item.currency === "UAH") {
-                sum += (item.limit - item.balance) / result[0].sale;
+                sum += (item.limit - item.balance) / rates.USD.sale;
               } else if (item.currency === "RUR") {
-                sum += (item.limit - item.balance) * result[2].sale / result[0].sale;
+                sum += (item.limit - item.balance) * rates.RUR.sale / rates.USD.sale;
               } else if (item.currency === "EUR") {
-                sum += (item.limit - item.balance) * result[1].sale / result[0].sale;
+                sum += (item.limit - item.balance) * rates.EUR.sale / rates.USD.sale;
               } else {
                 sum += (item.limit - item.balance);
               }
@@ -190,4 +190,7 @@ async function sumCreditDutyCustomers(isActive) {
     });
 
   return sum;
-}
+};
+
+console.log(sumCreditDutyCustomers(false));
+
