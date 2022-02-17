@@ -48,6 +48,7 @@ let customerTwo = new Customer('petya', true, '12.09.2021');
 let customerThree = new Customer('valya', false, '12.09.2021');
 let customerFour = new Customer('masha', true, '12.09.2021');
 let customerFive = new Customer('olya', false, '12.09.2021');
+
 customerOne.setDebitAccount('25.12.2023', 500);
 customerOne.setDebitAccount('25.12.2023', 500);
 customerOne.setDebitAccount('25.12.2023', 500);
@@ -65,14 +66,15 @@ customerThree.setCreditAccount('25.12.2023', 150, 200);
 customerThree.setCreditAccount('25.12.2023', 250, 500);
 
 customerFour.setDebitAccount('25.12.2023', 500, "EUR");
-customerFour.setCreditAccount('25.12.2023', 150, 200);
+customerFour.setCreditAccount('25.12.2023', 150, 200, "USA");
 
 customerFive.setDebitAccount('25.12.2023', 500, "EUR");
 
-bank.push(customerOne,customerTwo,customerThree,customerFour,customerFive);
+bank.push(customerOne, customerTwo, customerThree, customerFour, customerFive);
 
 let creditDutyAllCustomers = async function() {
   let duty = 0;
+
   await getExchangeRates()
     .then(res => {
       bank.forEach((item => {
@@ -99,6 +101,7 @@ let creditDutyAllCustomers = async function() {
 
 let totalFunds  = async function() {
   let cash = 0;
+
   await getExchangeRates()
     .then(result => {
       bank.forEach((customer => {
@@ -139,6 +142,7 @@ let totalFunds  = async function() {
 
 function amountCustomersDebtors(status) {
   let amount = 0;
+
   bank.forEach(customer => {
     if (customer.isActive === status){
       for (let i = 0; i < customer.creditAccount.length; i++){
@@ -153,3 +157,31 @@ function amountCustomersDebtors(status) {
   return amount;
 }
 
+async function sumCreditDutyCustomers(isActive) {
+  let sum = 0;
+
+  await getExchangeRates()
+    .then(res => {
+      bank.forEach((customer => {
+        if (customer.isActive === isActive && customer.creditAccount.length > 0) {
+          customer.creditAccount.forEach(item => {
+            if (item.limit > item.balance) {
+              if (item.currency === "UAH") {
+                sum += (item.limit - item.balance) / res[0].sale;
+              } else if (item.currency === "RUR") {
+                sum += (item.limit - item.balance) * res[2].sale / res[0].sale;
+              } else if (item.currency === "EUR") {
+                sum += (item.limit - item.balance) * res[1].sale / res[0].sale;
+              } else {
+                sum += (item.limit - item.balance);
+              }
+            }
+          })
+        }
+      }))
+    })
+
+  return sum;
+}
+
+console.log(sumCreditDutyCustomers(true))
