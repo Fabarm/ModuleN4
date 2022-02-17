@@ -94,7 +94,7 @@ let creditDutyAllCustomers = async function() {
           })
         }
       }))
-    })
+    });
 
   return duty;
 };
@@ -135,7 +135,7 @@ let totalFunds  = async function() {
           })
         }
       }))
-    })
+    });
 
   return cash;
 };
@@ -179,9 +179,7 @@ async function sumCreditDutyCustomers(isActive) {
           })
         }
       }))
-    })
+    });
 
   return sum;
 }
-
-console.log(sumCreditDutyCustomers(true))
