@@ -165,3 +165,13 @@ let sumCreditDutyCustomers = async function (isActive) {
 
   return sum;
 };
+
+bank.forEach(i => {
+  let card = document.createElement('div');
+  card.classList.add('.customer');
+  let name = document.createElement('H2');
+  name.innerHTML = i.fullName
+  card.append(name)
+  
+  document.querySelector(".customers").append(card)
+})
