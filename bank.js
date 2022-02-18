@@ -7,12 +7,15 @@ async function getExchangeRates() {
       let  rates = {};
       data.forEach(item => {
         rates[item.ccy] = item;
-      })
+      });
+      rates["UAH"] = {
+        sale : 1,
+      };
       return rates;
     })
     .catch(() => {
       throw new Error(`Could not fetch , status: ${result.status}`);
-    })
+    });
 
   return result;
 }
@@ -89,11 +92,11 @@ let creditDutyAllCustomers = async function() {
           item.creditAccount.forEach(item => {
             if (item.limit > item.balance) {
               let temp = (item.limit - item.balance) / rates.USD.sale;
-              item.currency !== "UAH" ? duty += temp * rates[item.currency].sale : duty += temp;
+              duty += temp * rates[item.currency].sale;
             }
-          })
+          });
         }
-      }))
+      }));
     });
 
   return duty;
@@ -108,19 +111,19 @@ let totalFunds = async function() {
         if (customer.debitAccount.length) {
           customer.debitAccount.forEach(item => {
             let temp = item.balance / rates.USD.sale;
-            item.currency !== "UAH" ? cash += temp * rates[item.currency].sale : cash += temp;
-          })
+            cash += temp * rates[item.currency].sale;
+          });
         }
 
         if (customer.creditAccount.length) {
           customer.creditAccount.forEach(item => {
             if (item.limit < item.balance) {
               let temp = (item.limit - item.balance) / rates.USD.sale;
-              item.currency !== "UAH" ? cash += temp * rates[item.currency].sale : cash += temp;
+              cash += temp * rates[item.currency].sale;
             }
-          })
+          });
         }
-      }))
+      }));
     });
 
   return cash;
@@ -138,7 +141,7 @@ let amountCustomersDebtors = function (status) {
         }
       }
     }
-  })
+  });
 
   return amount;
 };
@@ -153,11 +156,11 @@ let sumCreditDutyCustomers = async function (isActive) {
           customer.creditAccount.forEach(item => {
             if (item.limit > item.balance) {
               let temp = (item.limit - item.balance) / rates.USD.sale;
-              item.currency !== "UAH" ? sum += temp * rates[item.currency].sale : sum += temp;
+              sum += temp * rates[item.currency].sale;
             }
-          })
+          });
         }
-      }))
+      }));
     });
 
   return sum;
