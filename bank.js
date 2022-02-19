@@ -24,11 +24,13 @@ class Customer {
   fullName;
   isActive;
   dateReg;
+  codeId;
   debitAccount;
   creditAccount;
 
-  constructor(fullName, isActive, dateReg) {
+  constructor(fullName, codeId, isActive, dateReg) {
     this.fullName = fullName;
+    this.codeId = codeId;
     this.isActive = isActive;
     this.dateReg = dateReg;
     this.debitAccount = [];
@@ -53,11 +55,11 @@ class Customer {
   }
 }
 
-let customerOne = new Customer('vasya', true, '12.09.2021');
-let customerTwo = new Customer('petya', true, '12.09.2021');
-let customerThree = new Customer('valya', false, '12.09.2021');
-let customerFour = new Customer('masha', true, '12.09.2021');
-let customerFive = new Customer('olya', false, '12.09.2021');
+let customerOne = new Customer('vasya', 1234,  true, '12.09.2021');
+let customerTwo = new Customer('petya', 1235,  true, '12.09.2021');
+let customerThree = new Customer('valya', 1236,  false, '12.09.2021');
+let customerFour = new Customer('masha', 1237,  true, '12.09.2021');
+let customerFive = new Customer('olya', 1238,  false, '12.09.2021');
 
 customerOne.setDebitAccount('25.12.2023', 500, "UAH");
 customerOne.setDebitAccount('25.12.2023', 500, "UAH");
@@ -81,7 +83,7 @@ customerFour.setCreditAccount('25.12.2023', 150, 200, "USD");
 customerFive.setDebitAccount('25.12.2023', 500, "EUR");
 
 bank.push(customerOne, customerTwo, customerThree, customerFour, customerFive);
-
+console.log(bank)
 let creditDutyAllCustomers = async function() {
   let duty = 0;
 
@@ -166,12 +168,38 @@ let sumCreditDutyCustomers = async function (isActive) {
   return sum;
 };
 
-bank.forEach(i => {
-  let card = document.createElement('div');
-  card.classList.add('.customer');
-  let name = document.createElement('H2');
-  name.innerHTML = i.fullName
-  card.append(name)
-  
-  document.querySelector(".customers").append(card)
-})
+function pageHTML() {
+  let container = document.createElement('div');
+  container.className = 'container';
+  let body = document.querySelector('body');
+  body.append(container);
+  let content = document.createElement('div');
+  content.className = 'content';
+  container.append(content);
+  let customersList = document.createElement('div');
+  customersList.className = 'customers_list';
+  content.append(customersList);
+  let header = document.createElement('h2');
+  header.innerHTML = 'Customers';
+  let divInner = document.createElement('div');
+  divInner.className = 'customers_list_inner';
+  customersList.append(header, divInner);
+}
+pageHTML();
+
+function showCustomers() {
+  bank.forEach(item => {
+    let card = document.createElement('div');
+    card.className = "customer_card";
+    let name = document.createElement('h3');
+    name.innerHTML = 'Customer name: ' + item.fullName;
+    let id = document.createElement('h3');
+    id.innerHTML = 'Customer ID: ' + item.codeId;
+    let activity = document.createElement('h3');
+    activity.innerHTML = 'Activity: ' + (item.isActive ? 'Active' : 'Not active');
+    card.append(name, id, activity);
+    document.querySelector('.customers_list_inner').append(card);
+  });
+}
+
+showCustomers();
