@@ -178,7 +178,9 @@ function pageHTML() {
   container.append(content);
   let customersList = document.createElement('div');
   customersList.className = 'customers_list';
-  content.append(customersList);
+  let forms = document.createElement('div');
+  forms.className = 'forms';
+  content.append(customersList, forms);
   let header = document.createElement('h2');
   header.innerHTML = 'Customers';
   let divInner = document.createElement('div');
@@ -192,14 +194,47 @@ function showCustomers() {
     let card = document.createElement('div');
     card.className = "customer_card";
     let name = document.createElement('h3');
-    name.innerHTML = 'Customer name: ' + item.fullName;
-    let id = document.createElement('h3');
-    id.innerHTML = 'Customer ID: ' + item.codeId;
-    let activity = document.createElement('h3');
+    name.innerHTML = 'Name: ' + item.fullName;
+    let id = document.createElement('h4');
+    id.innerHTML = 'ID: ' + item.codeId;
+    let activity = document.createElement('h4');
     activity.innerHTML = 'Activity: ' + (item.isActive ? 'Active' : 'Not active');
-    card.append(name, id, activity);
+    let debit = document.createElement('h4');
+    let credit = document.createElement('h4');
+    if (item.debitAccount.length) {
+      debit.innerHTML = 'Amount debit accounts: ' + item.debitAccount.length;
+    } else {
+      debit.innerHTML = 'No debit accounts'
+    }
+    if (item.creditAccount.length) {
+      credit.innerHTML = 'Amount credit accounts: ' + item.creditAccount.length;
+    } else {
+      credit.innerHTML = 'No credit accounts'
+    }
+    card.append(name, id, activity, debit, credit);
     document.querySelector('.customers_list_inner').append(card);
   });
 }
 
 showCustomers();
+
+function showForms() {
+  let forms = document.querySelector('.forms');
+  let but = document.createElement('button');
+  but.innerHTML = 'add';
+
+  forms.append(but);
+}
+showForms();
+
+function dell(id) {
+  let a = document.querySelector('.customers_list_inner');
+  bank.forEach(item => {
+    if(item.codeId === id){
+      item.setDebitAccount('25.12.2023', 500, "UAH");
+      a.innerHTML = '';
+      showCustomers();
+    }
+  })
+}
+
