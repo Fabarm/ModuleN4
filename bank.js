@@ -189,6 +189,55 @@ function pageHTML() {
 }
 pageHTML();
 
+function showForms() {
+  let forms = document.querySelector('.forms');
+  let header = document.createElement('h2');
+  header.innerHTML = 'Services';
+
+  let formAdd = document.createElement('form');
+  formAdd.className = 'form_add';
+  let legendFormAdd = document.createElement('legend')
+  legendFormAdd.innerHTML = 'Form add customer'
+  let inputName = document.createElement('input');
+  inputName.placeholder = 'Enter full name customer';
+  let inputID = document.createElement('input');
+  inputID.placeholder = 'Enter code ID customer';
+  let labelActive = document.createElement('label');
+  labelActive.innerHTML = 'Enter active customer';
+  let selectFormAdd = document.createElement('select');
+  selectFormAdd.name = 'selectFormAdd'
+  let option1 = document.createElement('option');
+  option1.value = 'true';
+  option1.attributes = 'selected';
+  option1.innerHTML = 'active';
+  let option2 = document.createElement('option');
+  option2.value = 'false';
+  option2.innerHTML = 'not active';
+  selectFormAdd.append(option1, option2)
+  let btnAdd = document.createElement('button');
+  btnAdd.innerHTML = 'Add customer';
+  formAdd.append(legendFormAdd, inputName, inputID, labelActive,  selectFormAdd, btnAdd);
+
+  let formDel = document.createElement('form');
+  formDel.className = 'form_add';
+  let legendFormDel = document.createElement('legend');
+  legendFormDel.innerHTML = 'Form delete customer';
+  let labelFormDel = document.createElement('label');
+  labelFormDel.innerHTML = 'Select customer ID';
+  let selectFormDel = document.createElement('select');
+  selectFormDel.name = 'selectFormDel'
+  let option = document.createElement('option');
+  option.value = 'true';
+  option.innerHTML = [1,2,3,4,5,6]
+
+  selectFormDel.append(option)
+  let btnDel = document.createElement('button');
+  btnDel.innerHTML = 'Delete customer';
+  formDel.append(legendFormDel, labelFormDel, selectFormDel, btnDel)
+  forms.append(header, formAdd, formDel);
+}
+showForms();
+
 function showCustomers() {
   bank.forEach(item => {
     let card = document.createElement('div');
@@ -215,17 +264,7 @@ function showCustomers() {
     document.querySelector('.customers_list_inner').append(card);
   });
 }
-
 showCustomers();
-
-function showForms() {
-  let forms = document.querySelector('.forms');
-  let but = document.createElement('button');
-  but.innerHTML = 'add';
-
-  forms.append(but);
-}
-showForms();
 
 function dell(id) {
   let a = document.querySelector('.customers_list_inner');
