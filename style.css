@@ -19,7 +19,7 @@
 
 .customers_list_inner{
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     flex-wrap: wrap;
 }
 
@@ -28,5 +28,16 @@
     padding: 10px;
     border: 1px solid #8c8c8c;
     border-radius: 15px;
+}
+
+.form_add,
+.form_delete{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+button{
+    margin: 10px 0;
 }
 

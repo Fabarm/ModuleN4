@@ -83,7 +83,7 @@ customerFour.setCreditAccount('25.12.2023', 150, 200, "USD");
 customerFive.setDebitAccount('25.12.2023', 500, "EUR");
 
 bank.push(customerOne, customerTwo, customerThree, customerFour, customerFive);
-console.log(bank)
+
 let creditDutyAllCustomers = async function() {
   let duty = 0;
 
@@ -196,51 +196,102 @@ function showForms() {
 
   let formAdd = document.createElement('form');
   formAdd.className = 'form_add';
-  let legendFormAdd = document.createElement('legend')
-  legendFormAdd.innerHTML = 'Form add customer'
+  let fieldsetFormAdd = document.createElement('fieldset');
+  let legendFormAdd = document.createElement('legend');
+  legendFormAdd.innerHTML = 'Form add customer';
+  let pName = document.createElement('p');
+  let pId = document.createElement('p');
+  let pSelect = document.createElement('p');
   let inputName = document.createElement('input');
+  inputName.id = 'input_name'
   inputName.placeholder = 'Enter full name customer';
+  pName.append(inputName);
   let inputID = document.createElement('input');
+  inputID.id = 'input_id'
   inputID.placeholder = 'Enter code ID customer';
+  pId.append(inputID);
   let labelActive = document.createElement('label');
-  labelActive.innerHTML = 'Enter active customer';
+  labelActive.innerHTML = 'Select active customer';
   let selectFormAdd = document.createElement('select');
-  selectFormAdd.name = 'selectFormAdd'
-  let option1 = document.createElement('option');
-  option1.value = 'true';
-  option1.attributes = 'selected';
-  option1.innerHTML = 'active';
-  let option2 = document.createElement('option');
-  option2.value = 'false';
-  option2.innerHTML = 'not active';
-  selectFormAdd.append(option1, option2)
+  selectFormAdd.id = 'select_form_add'
+  selectFormAdd.name = 'formAdd';
+  let firstOption = document.createElement('option');
+  firstOption.value = 'true';
+  firstOption.attributes = 'selected';
+  firstOption.innerHTML = 'active';
+  let secondOption = document.createElement('option');
+  secondOption.value = 'false';
+  secondOption.innerHTML = 'not active';
+  selectFormAdd.append(firstOption, secondOption);
+  pSelect.append(labelActive, selectFormAdd);
   let btnAdd = document.createElement('button');
+  btnAdd.id = 'btn_add'
   btnAdd.innerHTML = 'Add customer';
-  formAdd.append(legendFormAdd, inputName, inputID, labelActive,  selectFormAdd, btnAdd);
+  fieldsetFormAdd.append(legendFormAdd, pName, pId, pSelect, btnAdd);
+  formAdd.append(fieldsetFormAdd);
 
-  let formDel = document.createElement('form');
-  formDel.className = 'form_add';
-  let legendFormDel = document.createElement('legend');
-  legendFormDel.innerHTML = 'Form delete customer';
-  let labelFormDel = document.createElement('label');
-  labelFormDel.innerHTML = 'Select customer ID';
-  let selectFormDel = document.createElement('select');
-  selectFormDel.name = 'selectFormDel'
-  let option = document.createElement('option');
-  option.value = 'true';
-  option.innerHTML = [1,2,3,4,5,6]
+  let formDelete = document.createElement('form');
+  formDelete.className = 'form_delete';
+  let fieldsetFormDelete = document.createElement('fieldset');
+  let legendFormDelete = document.createElement('legend');
+  legendFormDelete.innerHTML = 'Form delete customer';
+  let labelFormDelete = document.createElement('label');
+  labelFormDelete.innerHTML = 'Select customer ID';
+  let pSelectFormDelete = document.createElement('p');
+  let selectFormDelete = document.createElement('select');
+  selectFormDelete.id = 'select_form_delete';
+  selectFormDelete.name = 'formDelete';
 
-  selectFormDel.append(option)
-  let btnDel = document.createElement('button');
-  btnDel.innerHTML = 'Delete customer';
-  formDel.append(legendFormDel, labelFormDel, selectFormDel, btnDel)
-  forms.append(header, formAdd, formDel);
+  let optionZero = document.createElement('option');
+  selectFormDelete.append(optionZero);
+  bank.forEach(item => {
+    let optionSelectFormDelete = document.createElement('option');
+    optionSelectFormDelete.value = item.codeId;
+    optionSelectFormDelete.innerHTML = item.codeId;
+    selectFormDelete.append(optionSelectFormDelete);
+  })
+
+  pSelectFormDelete.append(labelFormDelete, selectFormDelete);
+  let btnDelete = document.createElement('button');
+  btnDelete.id = 'btn_delete';
+  btnDelete.innerHTML = 'Delete customer';
+  fieldsetFormDelete.append(legendFormDelete, pSelectFormDelete, btnDelete);
+  formDelete.append(fieldsetFormDelete);
+
+  let formAddBankAccount = document.createElement('form');
+  formAddBankAccount.className = 'form_add_bank_account';
+  let fieldsetFormAddBankAccount = document.createElement('fieldset');
+  let legendFormAddBankAccount = document.createElement('legend');
+  legendFormAddBankAccount.innerHTML = 'Form add bank account customer';
+  let labelFormAddBankAccount = document.createElement('label');
+  labelFormAddBankAccount.innerHTML = 'Select customer ID';
+  let pSelectFormAddBankAccount = document.createElement('p');
+  let selectFormAddBankAccount = document.createElement('select');
+  selectFormAddBankAccount.id = 'form_add_bank_account'
+  selectFormAddBankAccount.name = 'formAddBankAccount';
+  let optionZero1 = document.createElement('option');
+  selectFormAddBankAccount.append(optionZero1);
+  bank.forEach(item => {
+    let optionSelectFormAddBankAccount = document.createElement('option');
+    optionSelectFormAddBankAccount.value = item.codeId;
+    optionSelectFormAddBankAccount.innerHTML = item.codeId;
+    selectFormAddBankAccount.append(optionSelectFormAddBankAccount);
+  })
+
+  pSelectFormAddBankAccount.append(labelFormAddBankAccount, selectFormAddBankAccount);
+  let btnAddBankAccount = document.createElement('button');
+  btnAddBankAccount.id = 'btn_add_bank_account';
+  btnAddBankAccount.innerHTML = 'Add bank account customer';
+  fieldsetFormAddBankAccount.append(legendFormAddBankAccount, pSelectFormAddBankAccount, btnAddBankAccount);
+  formAddBankAccount.append(fieldsetFormAddBankAccount);
+  forms.append(header, formAdd, formDelete, formAddBankAccount);
 }
 showForms();
 
 function showCustomers() {
   bank.forEach(item => {
     let card = document.createElement('div');
+    card.id = item.codeId;
     card.className = "customer_card";
     let name = document.createElement('h3');
     name.innerHTML = 'Name: ' + item.fullName;
