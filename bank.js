@@ -181,19 +181,51 @@ function pageHTML() {
   let forms = document.createElement('div');
   forms.className = 'forms';
   content.append(customersList, forms);
-  let header = document.createElement('h2');
-  header.innerHTML = 'Customers';
+  let headerForms = document.createElement('h2');
+  headerForms.innerHTML = 'Services';
+  forms.append(headerForms);
+  let headerList = document.createElement('h2');
+  headerList.innerHTML = 'Customers';
   let divInner = document.createElement('div');
   divInner.className = 'customers_list_inner';
-  customersList.append(header, divInner);
+  customersList.append(headerList, divInner);
 }
 pageHTML();
 
-function showForms() {
-  let forms = document.querySelector('.forms');
-  let header = document.createElement('h2');
-  header.innerHTML = 'Services';
+function showCustomers() {
+  if (bank.length > 0) {
+    bank.forEach(item => {
+      let card = document.createElement('div');
+      card.id = item.codeId;
+      card.className = "customer_card";
+      let name = document.createElement('h3');
+      name.innerHTML = 'Name: ' + item.fullName;
+      let id = document.createElement('h4');
+      id.innerHTML = 'ID: ' + item.codeId;
+      let activity = document.createElement('h4');
+      activity.innerHTML = 'Activity: ' + (item.isActive ? 'Active' : 'Not active');
+      let debit = document.createElement('h4');
+      let credit = document.createElement('h4');
+      if (item.debitAccount.length) {
+        debit.innerHTML = 'Amount debit accounts: ' + item.debitAccount.length;
+      } else {
+        debit.innerHTML = 'No debit accounts'
+      }
+      if (item.creditAccount.length) {
+        credit.innerHTML = 'Amount credit accounts: ' + item.creditAccount.length;
+      } else {
+        credit.innerHTML = 'No credit accounts'
+      }
+      card.append(name, id, activity, debit, credit);
+      document.querySelector('.customers_list_inner').append(card);
+    });
+  } else {
+    document.querySelector('.customers_list_inner').append('Сustomers list is empty');
+  }
+}
+showCustomers();
 
+function showFormAdd() {
   let formAdd = document.createElement('form');
   formAdd.className = 'form_add';
   let fieldsetFormAdd = document.createElement('fieldset');
@@ -203,21 +235,20 @@ function showForms() {
   let pId = document.createElement('p');
   let pSelect = document.createElement('p');
   let inputName = document.createElement('input');
-  inputName.id = 'input_name'
+  inputName.id = 'input_name';
   inputName.placeholder = 'Enter full name customer';
   pName.append(inputName);
   let inputID = document.createElement('input');
-  inputID.id = 'input_id'
+  inputID.id = 'input_id';
   inputID.placeholder = 'Enter code ID customer';
   pId.append(inputID);
   let labelActive = document.createElement('label');
   labelActive.innerHTML = 'Select active customer';
   let selectFormAdd = document.createElement('select');
-  selectFormAdd.id = 'select_form_add'
+  selectFormAdd.id = 'select_form_add';
   selectFormAdd.name = 'formAdd';
   let firstOption = document.createElement('option');
   firstOption.value = 'true';
-  firstOption.attributes = 'selected';
   firstOption.innerHTML = 'active';
   let secondOption = document.createElement('option');
   secondOption.value = 'false';
@@ -225,11 +256,15 @@ function showForms() {
   selectFormAdd.append(firstOption, secondOption);
   pSelect.append(labelActive, selectFormAdd);
   let btnAdd = document.createElement('button');
-  btnAdd.id = 'btn_add'
+  btnAdd.id = 'btn_add';
   btnAdd.innerHTML = 'Add customer';
   fieldsetFormAdd.append(legendFormAdd, pName, pId, pSelect, btnAdd);
   formAdd.append(fieldsetFormAdd);
+  document.querySelector('.forms').append(formAdd);
+}
+showFormAdd();
 
+function showFormDelete() {
   let formDelete = document.createElement('form');
   formDelete.className = 'form_delete';
   let fieldsetFormDelete = document.createElement('fieldset');
@@ -241,7 +276,6 @@ function showForms() {
   let selectFormDelete = document.createElement('select');
   selectFormDelete.id = 'select_form_delete';
   selectFormDelete.name = 'formDelete';
-
   let optionZero = document.createElement('option');
   selectFormDelete.append(optionZero);
   bank.forEach(item => {
@@ -249,25 +283,27 @@ function showForms() {
     optionSelectFormDelete.value = item.codeId;
     optionSelectFormDelete.innerHTML = item.codeId;
     selectFormDelete.append(optionSelectFormDelete);
-  })
-
+  });
   pSelectFormDelete.append(labelFormDelete, selectFormDelete);
   let btnDelete = document.createElement('button');
   btnDelete.id = 'btn_delete';
   btnDelete.innerHTML = 'Delete customer';
   fieldsetFormDelete.append(legendFormDelete, pSelectFormDelete, btnDelete);
   formDelete.append(fieldsetFormDelete);
+  document.querySelector('.forms').append(formDelete);
+}
+showFormDelete();
 
+function showFormAddBankAccount() {
   let formAddBankAccount = document.createElement('form');
   formAddBankAccount.className = 'form_add_bank_account';
   let fieldsetFormAddBankAccount = document.createElement('fieldset');
   let legendFormAddBankAccount = document.createElement('legend');
-  legendFormAddBankAccount.innerHTML = 'Form add bank account customer';
+  legendFormAddBankAccount.innerHTML = 'Form add bank account';
   let labelFormAddBankAccount = document.createElement('label');
   labelFormAddBankAccount.innerHTML = 'Select customer ID';
-  let pSelectFormAddBankAccount = document.createElement('p');
   let selectFormAddBankAccount = document.createElement('select');
-  selectFormAddBankAccount.id = 'form_add_bank_account'
+  selectFormAddBankAccount.id = 'form_add_bank_account';
   selectFormAddBankAccount.name = 'formAddBankAccount';
   let optionZero1 = document.createElement('option');
   selectFormAddBankAccount.append(optionZero1);
@@ -276,55 +312,63 @@ function showForms() {
     optionSelectFormAddBankAccount.value = item.codeId;
     optionSelectFormAddBankAccount.innerHTML = item.codeId;
     selectFormAddBankAccount.append(optionSelectFormAddBankAccount);
-  })
-
+  });
+  let pSelectFormAddBankAccount = document.createElement('p');
   pSelectFormAddBankAccount.append(labelFormAddBankAccount, selectFormAddBankAccount);
+  let labelTypeAccount  = document.createElement('label');
+  labelTypeAccount .innerHTML = 'Select type bank account';
+  let selectTypeAccount = document.createElement('select')
+  selectTypeAccount.name = 'formAdd';
+  let optionDebit = document.createElement('option');
+  optionDebit.value = 'debit';
+  optionDebit.innerHTML = 'debit';
+  let optionCredit = document.createElement('option');
+  optionCredit.value = 'credit';
+  optionCredit.innerHTML = 'credit';
+  selectTypeAccount.append(optionDebit, optionCredit);
+  let pSelectTypeAccount = document.createElement('p');
+  pSelectTypeAccount.append(labelTypeAccount, selectTypeAccount);
+
+  let divDebit = document.createElement('div');
+  divDebit.className = 'div_debit';
+  let inputDataAccount = document.createElement('input');
+  inputDataAccount.placeholder = 'Enter expiration date';
+  let inputDebitBalance = document.createElement('input');
+  inputDebitBalance.placeholder = 'Enter balance customer';
+  divDebit.append(inputDataAccount, inputDebitBalance);
+
+  let divCredit = document.createElement('div');
+  divCredit.className = 'div_credit';
+  let inputCreditDataAccount = document.createElement('input');
+  inputCreditDataAccount.placeholder = 'Enter expiration date';
+  let inputCreditBalance = document.createElement('input');
+  inputCreditBalance.placeholder = 'Enter balance customer';
+  let inputCreditLimit = document.createElement('input');
+  inputCreditLimit.placeholder = 'Enter credit limit';
+  divCredit.append(inputCreditDataAccount, inputCreditBalance, inputCreditLimit);
+
   let btnAddBankAccount = document.createElement('button');
   btnAddBankAccount.id = 'btn_add_bank_account';
-  btnAddBankAccount.innerHTML = 'Add bank account customer';
-  fieldsetFormAddBankAccount.append(legendFormAddBankAccount, pSelectFormAddBankAccount, btnAddBankAccount);
+  btnAddBankAccount.innerHTML = 'Add bank account';
+  fieldsetFormAddBankAccount.append(legendFormAddBankAccount,
+    pSelectFormAddBankAccount,
+    pSelectTypeAccount,
+    divDebit,
+    divCredit,
+    btnAddBankAccount);
   formAddBankAccount.append(fieldsetFormAddBankAccount);
-  forms.append(header, formAdd, formDelete, formAddBankAccount);
+  document.querySelector('.forms').append(formAddBankAccount);
 }
-showForms();
+showFormAddBankAccount();
 
-function showCustomers() {
-  bank.forEach(item => {
-    let card = document.createElement('div');
-    card.id = item.codeId;
-    card.className = "customer_card";
-    let name = document.createElement('h3');
-    name.innerHTML = 'Name: ' + item.fullName;
-    let id = document.createElement('h4');
-    id.innerHTML = 'ID: ' + item.codeId;
-    let activity = document.createElement('h4');
-    activity.innerHTML = 'Activity: ' + (item.isActive ? 'Active' : 'Not active');
-    let debit = document.createElement('h4');
-    let credit = document.createElement('h4');
-    if (item.debitAccount.length) {
-      debit.innerHTML = 'Amount debit accounts: ' + item.debitAccount.length;
-    } else {
-      debit.innerHTML = 'No debit accounts'
-    }
-    if (item.creditAccount.length) {
-      credit.innerHTML = 'Amount credit accounts: ' + item.creditAccount.length;
-    } else {
-      credit.innerHTML = 'No credit accounts'
-    }
-    card.append(name, id, activity, debit, credit);
-    document.querySelector('.customers_list_inner').append(card);
-  });
-}
-showCustomers();
 
-function dell(id) {
-  let a = document.querySelector('.customers_list_inner');
-  bank.forEach(item => {
-    if(item.codeId === id){
-      item.setDebitAccount('25.12.2023', 500, "UAH");
-      a.innerHTML = '';
-      showCustomers();
-    }
-  })
-}
-
+// function dell(id) {
+//   let a = document.querySelector('.customers_list_inner');
+//   bank.forEach(item => {
+//     if(item.codeId === id){
+//       item.setDebitAccount('25.12.2023', 500, "UAH");
+//       a.innerHTML = '';
+//       showCustomers();
+//     }
+//   })
+// }

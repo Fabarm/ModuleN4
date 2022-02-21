@@ -31,13 +31,17 @@
 }
 
 .form_add,
-.form_delete{
-    display: flex;
+.form_delete,
+.form_add_bank_account{
+    display: block;
     flex-direction: column;
     margin-bottom: 15px;
 }
+.form_add_bank_account input {
+    margin-bottom: 15px;
+}
 
-button{
-    margin: 10px 0;
+.div_credit{
+    display: none;
 }
 
