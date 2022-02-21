@@ -32,7 +32,7 @@ class Customer {
     this.fullName = fullName;
     this.codeId = codeId;
     this.isActive = isActive;
-    this.dateReg = dateReg;
+    this.dateReg = dateReg || Date.now();
     this.debitAccount = [];
     this.creditAccount = [];
   }
@@ -304,17 +304,7 @@ function showFormAddBankAccount() {
   let selectFormAddBankAccount = document.createElement('select');
   selectFormAddBankAccount.id = 'selectFormAddBankAccount';
   selectFormAddBankAccount.name = 'formAddBankAccount';
-
-  // let optionZero1 = document.createElement('option');
-  // selectFormAddBankAccount.append(optionZero1);
-  // bank.forEach(item => {
-  //   let optionSelectFormAddBankAccount = document.createElement('option');
-  //   optionSelectFormAddBankAccount.value = item.codeId;
-  //   optionSelectFormAddBankAccount.innerHTML = item.codeId;
-  //   selectFormAddBankAccount.append(optionSelectFormAddBankAccount);
-  // });
   renderSelect(selectFormAddBankAccount);
-
   let pSelectFormAddBankAccount = document.createElement('p');
   pSelectFormAddBankAccount.append(labelFormAddBankAccount, selectFormAddBankAccount);
   let labelTypeAccount  = document.createElement('label');
@@ -378,6 +368,22 @@ checkAccount.addEventListener('change', (e) => {
     document.querySelector('.divDebit').style.display = 'block';
     document.querySelector('.divCredit').style.display = 'none';
   }
+})
+
+let addCustomer = document.getElementById('btnAdd');
+addCustomer.addEventListener("click", (e) => {
+  e.preventDefault();
+  let inner = document.querySelector('.customersList_inner');
+  let name = document.getElementById('inputName');
+  let id = document.getElementById('inputID');
+  let active = document.getElementById('selectFormAdd');
+  // let data = document.getElementById('selectFormAdd');
+
+  let customer = new Customer(name, id,  active);
+  bank.push(customer);
+  inner.innerHTML = '';
+  showCustomers();
+
 })
 
 
