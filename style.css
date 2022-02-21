@@ -17,31 +17,32 @@
     justify-content: space-around;
 }
 
-.customers_list_inner{
+.customersList_inner{
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
 }
 
-.customer_card{
+.customerCard{
     margin: 10px;
     padding: 10px;
     border: 1px solid #8c8c8c;
     border-radius: 15px;
 }
 
-.form_add,
-.form_delete,
-.form_add_bank_account{
+.formAdd,
+.formDelete,
+.formAddBankAccount{
     display: block;
     flex-direction: column;
     margin-bottom: 15px;
+    max-width: 245px;
 }
-.form_add_bank_account input {
+.formAddBankAccount input {
     margin-bottom: 15px;
 }
 
-.div_credit{
+.divCredit{
     display: none;
 }
 

@@ -83,7 +83,7 @@ customerFour.setCreditAccount('25.12.2023', 150, 200, "USD");
 customerFive.setDebitAccount('25.12.2023', 500, "EUR");
 
 bank.push(customerOne, customerTwo, customerThree, customerFour, customerFive);
-
+console.log(bank)
 let creditDutyAllCustomers = async function() {
   let duty = 0;
 
@@ -177,17 +177,23 @@ function pageHTML() {
   content.className = 'content';
   container.append(content);
   let customersList = document.createElement('div');
-  customersList.className = 'customers_list';
+  customersList.className = 'customersList';
   let forms = document.createElement('div');
   forms.className = 'forms';
   content.append(customersList, forms);
   let headerForms = document.createElement('h2');
   headerForms.innerHTML = 'Services';
-  forms.append(headerForms);
+  let formAdd = document.createElement('form');
+  formAdd.className = 'formAdd';
+  let formDelete = document.createElement('form');
+  formDelete.className = 'formDelete';
+  let formAddBankAccount = document.createElement('form');
+  formAddBankAccount.className = 'formAddBankAccount';
+  forms.append(headerForms, formAdd, formDelete, formAddBankAccount);
   let headerList = document.createElement('h2');
   headerList.innerHTML = 'Customers';
   let divInner = document.createElement('div');
-  divInner.className = 'customers_list_inner';
+  divInner.className = 'customersList_inner';
   customersList.append(headerList, divInner);
 }
 pageHTML();
@@ -197,7 +203,7 @@ function showCustomers() {
     bank.forEach(item => {
       let card = document.createElement('div');
       card.id = item.codeId;
-      card.className = "customer_card";
+      card.className = "customerCard";
       let name = document.createElement('h3');
       name.innerHTML = 'Name: ' + item.fullName;
       let id = document.createElement('h4');
@@ -217,35 +223,35 @@ function showCustomers() {
         credit.innerHTML = 'No credit accounts'
       }
       card.append(name, id, activity, debit, credit);
-      document.querySelector('.customers_list_inner').append(card);
+      document.querySelector('.customersList_inner').append(card);
     });
   } else {
-    document.querySelector('.customers_list_inner').append('Сustomers list is empty');
+    document.querySelector('.customersList_inner').append('Сustomers list is empty');
   }
 }
 showCustomers();
 
 function showFormAdd() {
-  let formAdd = document.createElement('form');
-  formAdd.className = 'form_add';
+  let formAdd = document.querySelector('.formAdd');
   let fieldsetFormAdd = document.createElement('fieldset');
+  fieldsetFormAdd.id = 'fieldsetFormAdd'
   let legendFormAdd = document.createElement('legend');
   legendFormAdd.innerHTML = 'Form add customer';
   let pName = document.createElement('p');
   let pId = document.createElement('p');
   let pSelect = document.createElement('p');
   let inputName = document.createElement('input');
-  inputName.id = 'input_name';
+  inputName.id = 'inputName';
   inputName.placeholder = 'Enter full name customer';
   pName.append(inputName);
   let inputID = document.createElement('input');
-  inputID.id = 'input_id';
+  inputID.id = 'inputID';
   inputID.placeholder = 'Enter code ID customer';
   pId.append(inputID);
   let labelActive = document.createElement('label');
   labelActive.innerHTML = 'Select active customer';
   let selectFormAdd = document.createElement('select');
-  selectFormAdd.id = 'select_form_add';
+  selectFormAdd.id = 'selectFormAdd';
   selectFormAdd.name = 'formAdd';
   let firstOption = document.createElement('option');
   firstOption.value = 'true';
@@ -256,7 +262,7 @@ function showFormAdd() {
   selectFormAdd.append(firstOption, secondOption);
   pSelect.append(labelActive, selectFormAdd);
   let btnAdd = document.createElement('button');
-  btnAdd.id = 'btn_add';
+  btnAdd.id = 'btnAdd';
   btnAdd.innerHTML = 'Add customer';
   fieldsetFormAdd.append(legendFormAdd, pName, pId, pSelect, btnAdd);
   formAdd.append(fieldsetFormAdd);
@@ -265,8 +271,7 @@ function showFormAdd() {
 showFormAdd();
 
 function showFormDelete() {
-  let formDelete = document.createElement('form');
-  formDelete.className = 'form_delete';
+  let formDelete = document.querySelector('.formDelete');
   let fieldsetFormDelete = document.createElement('fieldset');
   let legendFormDelete = document.createElement('legend');
   legendFormDelete.innerHTML = 'Form delete customer';
@@ -274,19 +279,14 @@ function showFormDelete() {
   labelFormDelete.innerHTML = 'Select customer ID';
   let pSelectFormDelete = document.createElement('p');
   let selectFormDelete = document.createElement('select');
-  selectFormDelete.id = 'select_form_delete';
+  selectFormDelete.id = 'selectFormDelete';
   selectFormDelete.name = 'formDelete';
-  let optionZero = document.createElement('option');
-  selectFormDelete.append(optionZero);
-  bank.forEach(item => {
-    let optionSelectFormDelete = document.createElement('option');
-    optionSelectFormDelete.value = item.codeId;
-    optionSelectFormDelete.innerHTML = item.codeId;
-    selectFormDelete.append(optionSelectFormDelete);
-  });
+
+  renderSelect(selectFormDelete);
+
   pSelectFormDelete.append(labelFormDelete, selectFormDelete);
   let btnDelete = document.createElement('button');
-  btnDelete.id = 'btn_delete';
+  btnDelete.id = 'btnDelete';
   btnDelete.innerHTML = 'Delete customer';
   fieldsetFormDelete.append(legendFormDelete, pSelectFormDelete, btnDelete);
   formDelete.append(fieldsetFormDelete);
@@ -295,29 +295,32 @@ function showFormDelete() {
 showFormDelete();
 
 function showFormAddBankAccount() {
-  let formAddBankAccount = document.createElement('form');
-  formAddBankAccount.className = 'form_add_bank_account';
+  let formAddBankAccount = document.querySelector('.formAddBankAccount');
   let fieldsetFormAddBankAccount = document.createElement('fieldset');
   let legendFormAddBankAccount = document.createElement('legend');
   legendFormAddBankAccount.innerHTML = 'Form add bank account';
   let labelFormAddBankAccount = document.createElement('label');
   labelFormAddBankAccount.innerHTML = 'Select customer ID';
   let selectFormAddBankAccount = document.createElement('select');
-  selectFormAddBankAccount.id = 'form_add_bank_account';
+  selectFormAddBankAccount.id = 'selectFormAddBankAccount';
   selectFormAddBankAccount.name = 'formAddBankAccount';
-  let optionZero1 = document.createElement('option');
-  selectFormAddBankAccount.append(optionZero1);
-  bank.forEach(item => {
-    let optionSelectFormAddBankAccount = document.createElement('option');
-    optionSelectFormAddBankAccount.value = item.codeId;
-    optionSelectFormAddBankAccount.innerHTML = item.codeId;
-    selectFormAddBankAccount.append(optionSelectFormAddBankAccount);
-  });
+
+  // let optionZero1 = document.createElement('option');
+  // selectFormAddBankAccount.append(optionZero1);
+  // bank.forEach(item => {
+  //   let optionSelectFormAddBankAccount = document.createElement('option');
+  //   optionSelectFormAddBankAccount.value = item.codeId;
+  //   optionSelectFormAddBankAccount.innerHTML = item.codeId;
+  //   selectFormAddBankAccount.append(optionSelectFormAddBankAccount);
+  // });
+  renderSelect(selectFormAddBankAccount);
+
   let pSelectFormAddBankAccount = document.createElement('p');
   pSelectFormAddBankAccount.append(labelFormAddBankAccount, selectFormAddBankAccount);
   let labelTypeAccount  = document.createElement('label');
   labelTypeAccount .innerHTML = 'Select type bank account';
-  let selectTypeAccount = document.createElement('select')
+  let selectTypeAccount = document.createElement('select');
+  selectTypeAccount.id = 'selectTypeAccount';
   selectTypeAccount.name = 'formAdd';
   let optionDebit = document.createElement('option');
   optionDebit.value = 'debit';
@@ -330,20 +333,25 @@ function showFormAddBankAccount() {
   pSelectTypeAccount.append(labelTypeAccount, selectTypeAccount);
 
   let divDebit = document.createElement('div');
-  divDebit.className = 'div_debit';
-  let inputDataAccount = document.createElement('input');
-  inputDataAccount.placeholder = 'Enter expiration date';
+  divDebit.className = 'divDebit';
+  let inputDebitDataAccount = document.createElement('input');
+  inputDebitDataAccount.id = 'inputDebitDataAccount';
+  inputDebitDataAccount.placeholder = 'Enter expiration date';
   let inputDebitBalance = document.createElement('input');
+  inputDebitBalance.id = 'inputDebitBalance';
   inputDebitBalance.placeholder = 'Enter balance customer';
-  divDebit.append(inputDataAccount, inputDebitBalance);
+  divDebit.append(inputDebitDataAccount, inputDebitBalance);
 
   let divCredit = document.createElement('div');
-  divCredit.className = 'div_credit';
+  divCredit.className = 'divCredit';
   let inputCreditDataAccount = document.createElement('input');
+  inputCreditDataAccount.id = 'inputCreditDataAccount';
   inputCreditDataAccount.placeholder = 'Enter expiration date';
   let inputCreditBalance = document.createElement('input');
+  inputCreditBalance.id = 'inputCreditBalance';
   inputCreditBalance.placeholder = 'Enter balance customer';
   let inputCreditLimit = document.createElement('input');
+  inputCreditLimit.id = 'inputCreditLimit';
   inputCreditLimit.placeholder = 'Enter credit limit';
   divCredit.append(inputCreditDataAccount, inputCreditBalance, inputCreditLimit);
 
@@ -361,6 +369,49 @@ function showFormAddBankAccount() {
 }
 showFormAddBankAccount();
 
+let checkAccount = document.getElementById('selectTypeAccount');
+checkAccount.addEventListener('change', (e) => {
+  if (checkAccount.value === 'credit') {
+    document.querySelector('.divDebit').style.display = 'none';
+    document.querySelector('.divCredit').style.display = 'block';
+  } else {
+    document.querySelector('.divDebit').style.display = 'block';
+    document.querySelector('.divCredit').style.display = 'none';
+  }
+})
+
+
+let deleteCustomer = document.getElementById('btnDelete');
+deleteCustomer.addEventListener('click', (e) => {
+  e.preventDefault();
+  let inner = document.querySelector('.customersList_inner');
+  let selectFormDelete = document.querySelector('#selectFormDelete')
+  let selectFormAddBankAccount = document.querySelector('#selectFormAddBankAccount')
+  let id = Number(document.getElementById('selectFormDelete').value);
+
+  bank.forEach((item, i)=> {
+    if(item.codeId === id){
+      bank.splice(i, 1);
+      inner.innerHTML = '';
+      showCustomers();
+      selectFormDelete.innerHTML = '';
+      renderSelect(selectFormDelete);
+      selectFormAddBankAccount.innerHTML = '';
+      renderSelect(selectFormAddBankAccount);
+    }
+  })
+})
+
+function renderSelect(select) {
+  let optionZero = document.createElement('option');
+  select.append(optionZero);
+  bank.forEach(item => {
+    let optionSelectFormDelete = document.createElement('option');
+    optionSelectFormDelete.value = item.codeId;
+    optionSelectFormDelete.innerHTML = item.codeId;
+    select.append(optionSelectFormDelete);
+  });
+}
 
 // function dell(id) {
 //   let a = document.querySelector('.customers_list_inner');
