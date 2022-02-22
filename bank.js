@@ -60,7 +60,7 @@ let customerTwo = new Customer('Sidorov Egor', '1234567891012',  'active');
 let customerThree = new Customer('Ivanov Sergey', '1234567891013',  'not active');
 let customerFour = new Customer('Petrenko Ann', '1234567891014',  'active');
 let customerFive = new Customer('Sidorenko Kate', '1234567891015',  'not active');
-let customerSix = new Customer('Ivanchenko Olga', '1234567891016',  'active');
+let customerSix = new Customer('Ivanich Olga', '1234567891016',  'active');
 
 customerOne.setDebitAccount('25.12.2023', 15000, "UAH");
 customerOne.setCreditAccount('25.12.2023', 550, 200, "USD");
@@ -142,14 +142,13 @@ let amountCustomersDebtors = function (status) {
       }
     }
   });
+
   if (status === 'active') {
     document.getElementById('amountActiveCustomer').innerHTML = `Amount active customer have a bank debt: ${amount}`;
   } else {
     document.getElementById('amountNotActiveCustomer').innerHTML = `Amount not active customer have a bank debt: ${amount}`;
   }
-
 };
-
 
 let sumCreditDutyCustomers = async function (isActive) {
   let sum = 0;
@@ -277,8 +276,8 @@ function showFormAddBankAccount() {
   renderSelect(selectFormAddBankAccount);
   let pSelectFormAddBankAccount = document.createElement('p');
   pSelectFormAddBankAccount.append(labelFormAddBankAccount, selectFormAddBankAccount);
-  let labelTypeAccount  = document.createElement('label');
-  labelTypeAccount .innerHTML = 'Select type bank account';
+  let labelTypeAccount = document.createElement('label');
+  labelTypeAccount.innerHTML = 'Select type bank account';
   let selectTypeAccount = document.createElement('select');
   selectTypeAccount.id = 'selectTypeAccount';
   selectTypeAccount.name = 'formAdd';
@@ -292,7 +291,7 @@ function showFormAddBankAccount() {
   let pSelectTypeAccount = document.createElement('p');
   pSelectTypeAccount.append(labelTypeAccount, selectTypeAccount);
   let labelTypeCurrency = document.createElement('label');
-  labelTypeCurrency .innerHTML = 'Select type currency';
+  labelTypeCurrency.innerHTML = 'Select type currency';
   let selectTypeCurrency = document.createElement('select');
   selectTypeCurrency.id = 'selectTypeCurrency';
   selectTypeCurrency.name = 'formAddBankAccount';
@@ -302,7 +301,7 @@ function showFormAddBankAccount() {
   let optionUSD = document.createElement('option');
   optionUSD.value = 'USD';
   optionUSD.innerHTML = 'USD';
-  let optionRUR= document.createElement('option');
+  let optionRUR = document.createElement('option');
   optionRUR.value = 'RUR';
   optionRUR.innerHTML = 'RUR';
   let optionEUR = document.createElement('option');
@@ -349,7 +348,7 @@ checkAccount.addEventListener('change', () => {
 });
 
 let addCustomer = document.getElementById('btnAdd');
-addCustomer.addEventListener("click", (event) => {
+addCustomer.addEventListener('click', (event) => {
   event.preventDefault();
   let name = document.getElementById('inputName').value;
   let id = document.getElementById('inputID').value;
@@ -366,11 +365,10 @@ deleteCustomer.addEventListener('click', (event) => {
   event.preventDefault();
   let id = document.getElementById('selectFormDelete').value;
 
-  bank.forEach((item, i)=> {
+  bank.forEach((item, i) => {
     if (item.codeId === id) {
       bank.splice(i, 1);
       renderAll();
-
     }
   });
 });
@@ -404,7 +402,7 @@ function showCustomers() {
     bank.forEach(item => {
       let card = document.createElement('div');
       card.id = item.codeId;
-      card.className = "customerCard";
+      card.className = 'customerCard';
       let name = document.createElement('h3');
       name.innerHTML = 'Name: ' + item.fullName;
       let id = document.createElement('h4');
