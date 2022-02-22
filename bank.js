@@ -55,11 +55,12 @@ class Customer {
   }
 }
 
-let customerOne = new Customer('vasya', '1234',  'active');
-let customerTwo = new Customer('petya', '1235',  'active');
-let customerThree = new Customer('valya', '1236',  'not active');
-let customerFour = new Customer('masha', '1237',  'active');
-let customerFive = new Customer('olya', '1238',  'not active');
+let customerOne = new Customer('Petrov Ivan', '1234567891011',  'active');
+let customerTwo = new Customer('Sidorov Egor', '1234567891012',  'active');
+let customerThree = new Customer('Ivanov Sergey', '1234567891013',  'not active');
+let customerFour = new Customer('Petrenko Ann', '1234567891014',  'active');
+let customerFive = new Customer('Sidorenko Kate', '1234567891015',  'not active');
+let customerSix = new Customer('Ivanchenko Olga', '1234567891016',  'active');
 
 customerOne.setDebitAccount('25.12.2023', 15000, "UAH");
 customerOne.setCreditAccount('25.12.2023', 550, 200, "USD");
@@ -72,8 +73,10 @@ customerFour.setDebitAccount('25.12.2023', 500, "EUR");
 customerFour.setCreditAccount('25.12.2023', 150, 200, "USD");
 customerFive.setDebitAccount('25.12.2023', 500, "EUR");
 customerFive.setCreditAccount('25.12.2023', 250, 200, "USD");
+customerSix.setDebitAccount('25.12.2023', 200, "EUR");
+customerSix.setCreditAccount('25.12.2023', 150, 200, "USD");
 
-bank.push(customerOne, customerTwo, customerThree, customerFour, customerFive);
+bank.push(customerOne, customerTwo, customerThree, customerFour, customerFive, customerSix);
 
 let creditDutyAllCustomers = async function() {
   let duty = 0;
@@ -92,8 +95,9 @@ let creditDutyAllCustomers = async function() {
       }));
     });
 
-  return duty;
+  document.getElementById('creditDuty').innerHTML = `Customer debt: ${duty} $`;
 };
+creditDutyAllCustomers();
 
 let totalFunds = async function() {
   let cash = 0;
@@ -119,8 +123,11 @@ let totalFunds = async function() {
       }));
     });
 
-  return cash;
+  document.getElementById('totalFunds').innerHTML = `The total amount of money in the bank: ${cash} $`;
+  amountCustomersDebtors('active');
+  amountCustomersDebtors('not active');
 };
+totalFunds();
 
 let amountCustomersDebtors = function (status) {
   let amount = 0;
@@ -135,9 +142,14 @@ let amountCustomersDebtors = function (status) {
       }
     }
   });
+  if (status === 'active') {
+    document.getElementById('amountActiveCustomer').innerHTML = `Amount active customer have a bank debt: ${amount}`;
+  } else {
+    document.getElementById('amountNotActiveCustomer').innerHTML = `Amount not active customer have a bank debt: ${amount}`;
+  }
 
-  return amount;
 };
+
 
 let sumCreditDutyCustomers = async function (isActive) {
   let sum = 0;
@@ -183,9 +195,11 @@ function pageHTML() {
   forms.append(headerForms, formAdd, formDelete, formAddBankAccount);
   let headerList = document.createElement('h2');
   headerList.innerHTML = 'Customers';
-  let divInner = document.createElement('div');
-  divInner.className = 'customersList_inner';
-  customersList.append(headerList, divInner);
+  let divInfo = document.createElement('div');
+  divInfo.className = 'info';
+  let divListInner = document.createElement('div');
+  divListInner.className = 'customersList_inner';
+  customersList.append(headerList, divInfo, divListInner);
 }
 pageHTML();
 
@@ -277,7 +291,6 @@ function showFormAddBankAccount() {
   selectTypeAccount.append(optionDebit, optionCredit);
   let pSelectTypeAccount = document.createElement('p');
   pSelectTypeAccount.append(labelTypeAccount, selectTypeAccount);
-
   let labelTypeCurrency = document.createElement('label');
   labelTypeCurrency .innerHTML = 'Select type currency';
   let selectTypeCurrency = document.createElement('select');
@@ -354,9 +367,10 @@ deleteCustomer.addEventListener('click', (event) => {
   let id = document.getElementById('selectFormDelete').value;
 
   bank.forEach((item, i)=> {
-    if(item.codeId === id){
+    if (item.codeId === id) {
       bank.splice(i, 1);
       renderAll();
+
     }
   });
 });
@@ -385,6 +399,7 @@ addBankAccount.addEventListener('click', (event) => {
 });
 
 function showCustomers() {
+  let inner = document.querySelector('.customersList_inner');
   if (bank.length > 0) {
     bank.forEach(item => {
       let card = document.createElement('div');
@@ -409,13 +424,27 @@ function showCustomers() {
         credit.innerHTML = 'No credit accounts';
       }
       card.append(name, id, activity, debit, credit);
-      document.querySelector('.customersList_inner').append(card);
+      inner.append(card);
     });
   } else {
-    document.querySelector('.customersList_inner').append('Customers list is empty');
+    inner.append('Customers list is empty');
   }
 }
 showCustomers();
+
+function showInfo() {
+  let info = document.querySelector('.info');
+  let totalFunds = document.createElement('div');
+  totalFunds.id ='totalFunds';
+  let creditDuty = document.createElement('div');
+  creditDuty.id = 'creditDuty';
+  let amountActiveCustomer = document.createElement('div');
+  amountActiveCustomer.id = 'amountActiveCustomer';
+  let amountNotActiveCustomer = document.createElement('div');
+  amountNotActiveCustomer.id = 'amountNotActiveCustomer';
+  info.append(totalFunds, creditDuty, amountActiveCustomer, amountNotActiveCustomer);
+}
+showInfo();
 
 function renderSelect(select) {
   let optionZero = document.createElement('option');
@@ -439,4 +468,6 @@ function renderAll() {
   selectFormAddBankAccount.innerHTML = '';
   renderSelect(selectFormAddBankAccount);
   document.querySelector('.divCredit').style.display = 'none';
+  totalFunds();
+  creditDutyAllCustomers();
 }
