@@ -61,25 +61,14 @@ let customerThree = new Customer('valya', 1236,  'not active');
 let customerFour = new Customer('masha', 1237,  'active');
 let customerFive = new Customer('olya', 1238,  'not active');
 
-customerOne.setDebitAccount('25.12.2023', 500, "UAH");
-customerOne.setDebitAccount('25.12.2023', 500, "UAH");
-customerOne.setDebitAccount('25.12.2023', 500, "UAH");
-
-customerTwo.setDebitAccount('25.12.2023', 5000, "RUR");
+customerOne.setDebitAccount('25.12.2023', 1500, "UAH");
 customerTwo.setDebitAccount('25.12.2023', 6000, "RUR");
-customerTwo.setCreditAccount('25.12.2023', 400, 500, "USD");
-customerTwo.setCreditAccount('25.12.2023', 300, 500, "RUR");
 customerTwo.setCreditAccount('25.12.2023', 200, 500, "EUR");
-customerTwo.setCreditAccount('25.12.2023', 100, 500, 'USD');
-
+customerTwo.setCreditAccount('25.12.2023', 600, 500, 'USD');
 customerThree.setDebitAccount('25.12.2023', 500, "USD");
 customerThree.setCreditAccount('25.12.2023', 250, 500, "UAH");
-customerThree.setCreditAccount('25.12.2023', 150, 200, "UAH");
-customerThree.setCreditAccount('25.12.2023', 250, 500, "UAH");
-
 customerFour.setDebitAccount('25.12.2023', 500, "EUR");
 customerFour.setCreditAccount('25.12.2023', 150, 200, "USD");
-
 customerFive.setDebitAccount('25.12.2023', 500, "EUR");
 
 bank.push(customerOne, customerTwo, customerThree, customerFour, customerFive);
@@ -198,38 +187,7 @@ function pageHTML() {
 }
 pageHTML();
 
-function showCustomers() {
-  if (bank.length > 0) {
-    bank.forEach(item => {
-      let card = document.createElement('div');
-      card.id = item.codeId;
-      card.className = "customerCard";
-      let name = document.createElement('h3');
-      name.innerHTML = 'Name: ' + item.fullName;
-      let id = document.createElement('h4');
-      id.innerHTML = 'ID: ' + item.codeId;
-      let activity = document.createElement('h4');
-      activity.innerHTML = 'Activity: ' + item.isActive;
-      let debit = document.createElement('h4');
-      let credit = document.createElement('h4');
-      if (item.debitAccount.length) {
-        debit.innerHTML = 'Amount debit accounts: ' + item.debitAccount.length;
-      } else {
-        debit.innerHTML = 'No debit accounts'
-      }
-      if (item.creditAccount.length) {
-        credit.innerHTML = 'Amount credit accounts: ' + item.creditAccount.length;
-      } else {
-        credit.innerHTML = 'No credit accounts'
-      }
-      card.append(name, id, activity, debit, credit);
-      document.querySelector('.customersList_inner').append(card);
-    });
-  } else {
-    document.querySelector('.customersList_inner').append('Сustomers list is empty');
-  }
-}
-showCustomers();
+
 
 function showFormAdd() {
   let formAdd = document.querySelector('.formAdd');
@@ -348,6 +306,7 @@ function showFormAddBankAccount() {
   inputBalance.placeholder = 'Enter balance customer';
   let divCredit = document.createElement('div');
   divCredit.className = 'divCredit';
+  divCredit.style.display = 'none'
   let inputCreditLimit = document.createElement('input');
   inputCreditLimit.id = 'inputCreditLimit';
   inputCreditLimit.placeholder = 'Enter credit limit';
@@ -406,25 +365,58 @@ deleteCustomer.addEventListener('click', (e) => {
 let addBankAccount = document.getElementById('btn_add_bank_account');
 addBankAccount.addEventListener('click', (e) => {
   e.preventDefault();
-  let id = Number(document.getElementById('selectFormAddBankAccount').value);
+  let id = document.getElementById('selectFormAddBankAccount').value;
   let typeAccount = document.getElementById('selectTypeAccount').value;
   let currency = document.getElementById('selectTypeCurrency').value;
   let data = document.getElementById('inputDataAccount').value;
   let balance = document.getElementById('inputBalance').value;
   let limit = document.getElementById('inputCreditLimit').value;
 
-  bank.forEach((item, i)=> {
-    if (item.codeId === id) {
+  bank.forEach(item => {
+    if (item.codeId == id) {
       if (typeAccount === 'debit') {
         item.setDebitAccount(data, balance, currency);
-      } else {
-        item.setCreditAccount(data, balance, limit, currency)
+      } else{
+        item.setCreditAccount(data, balance, limit, currency);
       }
       renderAll();
       document.querySelector('.formAddBankAccount').reset();
     }
   });
 })
+
+function showCustomers() {
+  if (bank.length > 0) {
+    bank.forEach(item => {
+      let card = document.createElement('div');
+      card.id = item.codeId;
+      card.className = "customerCard";
+      let name = document.createElement('h3');
+      name.innerHTML = 'Name: ' + item.fullName;
+      let id = document.createElement('h4');
+      id.innerHTML = 'ID: ' + item.codeId;
+      let activity = document.createElement('h4');
+      activity.innerHTML = 'Activity: ' + item.isActive;
+      let debit = document.createElement('h4');
+      let credit = document.createElement('h4');
+      if (item.debitAccount.length) {
+        debit.innerHTML = 'Amount debit accounts: ' + item.debitAccount.length;
+      } else {
+        debit.innerHTML = 'No debit accounts'
+      }
+      if (item.creditAccount.length) {
+        credit.innerHTML = 'Amount credit accounts: ' + item.creditAccount.length;
+      } else {
+        credit.innerHTML = 'No credit accounts'
+      }
+      card.append(name, id, activity, debit, credit);
+      document.querySelector('.customersList_inner').append(card);
+    });
+  } else {
+    document.querySelector('.customersList_inner').append('Сustomers list is empty');
+  }
+}
+showCustomers();
 
 function renderSelect(select) {
   let optionZero = document.createElement('option');
@@ -447,4 +439,5 @@ function renderAll() {
   renderSelect(selectFormDelete);
   selectFormAddBankAccount.innerHTML = '';
   renderSelect(selectFormAddBankAccount);
+  document.querySelector('.divCredit').style.display = 'none';
 }
