@@ -209,7 +209,7 @@ function showCustomers() {
       let id = document.createElement('h4');
       id.innerHTML = 'ID: ' + item.codeId;
       let activity = document.createElement('h4');
-      activity.innerHTML = 'Activity: ' + (item.isActive ? 'Active' : 'Not active');
+      activity.innerHTML = 'Activity: ' + (item.isActive ? 'active' : 'not active');
       let debit = document.createElement('h4');
       let credit = document.createElement('h4');
       if (item.debitAccount.length) {
@@ -254,10 +254,10 @@ function showFormAdd() {
   selectFormAdd.id = 'selectFormAdd';
   selectFormAdd.name = 'formAdd';
   let firstOption = document.createElement('option');
-  firstOption.value = 'true';
+  firstOption.value = 'active';
   firstOption.innerHTML = 'active';
   let secondOption = document.createElement('option');
-  secondOption.value = 'false';
+  secondOption.value = 'not active';
   secondOption.innerHTML = 'not active';
   selectFormAdd.append(firstOption, secondOption);
   pSelect.append(labelActive, selectFormAdd);
@@ -373,16 +373,15 @@ checkAccount.addEventListener('change', (e) => {
 let addCustomer = document.getElementById('btnAdd');
 addCustomer.addEventListener("click", (e) => {
   e.preventDefault();
-  let inner = document.querySelector('.customersList_inner');
-  let name = document.getElementById('inputName');
-  let id = document.getElementById('inputID');
-  let active = document.getElementById('selectFormAdd');
+  let name = document.getElementById('inputName').value;
+  let id = document.getElementById('inputID').value;
+  let active = document.getElementById('selectFormAdd').value;
+  console.log(active)
   // let data = document.getElementById('selectFormAdd');
 
-  let customer = new Customer(name, id,  active);
+  let customer = new Customer(name, id, active);
   bank.push(customer);
-  inner.innerHTML = '';
-  showCustomers();
+  renderAll();
 
 })
 
@@ -390,20 +389,12 @@ addCustomer.addEventListener("click", (e) => {
 let deleteCustomer = document.getElementById('btnDelete');
 deleteCustomer.addEventListener('click', (e) => {
   e.preventDefault();
-  let inner = document.querySelector('.customersList_inner');
-  let selectFormDelete = document.querySelector('#selectFormDelete')
-  let selectFormAddBankAccount = document.querySelector('#selectFormAddBankAccount')
   let id = Number(document.getElementById('selectFormDelete').value);
 
   bank.forEach((item, i)=> {
     if(item.codeId === id){
       bank.splice(i, 1);
-      inner.innerHTML = '';
-      showCustomers();
-      selectFormDelete.innerHTML = '';
-      renderSelect(selectFormDelete);
-      selectFormAddBankAccount.innerHTML = '';
-      renderSelect(selectFormAddBankAccount);
+      renderAll();
     }
   })
 })
@@ -417,6 +408,18 @@ function renderSelect(select) {
     optionSelectFormDelete.innerHTML = item.codeId;
     select.append(optionSelectFormDelete);
   });
+}
+
+function renderAll() {
+  let inner = document.querySelector('.customersList_inner');
+  let selectFormDelete = document.querySelector('#selectFormDelete');
+  let selectFormAddBankAccount = document.querySelector('#selectFormAddBankAccount');
+  inner.innerHTML = '';
+  showCustomers();
+  selectFormDelete.innerHTML = '';
+  renderSelect(selectFormDelete);
+  selectFormAddBankAccount.innerHTML = '';
+  renderSelect(selectFormAddBankAccount);
 }
 
 // function dell(id) {
