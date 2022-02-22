@@ -55,11 +55,11 @@ class Customer {
   }
 }
 
-let customerOne = new Customer('vasya', 1234,  true, '12.09.2021');
-let customerTwo = new Customer('petya', 1235,  true, '12.09.2021');
-let customerThree = new Customer('valya', 1236,  false, '12.09.2021');
-let customerFour = new Customer('masha', 1237,  true, '12.09.2021');
-let customerFive = new Customer('olya', 1238,  false, '12.09.2021');
+let customerOne = new Customer('vasya', 1234,  'active', '12.09.2021');
+let customerTwo = new Customer('petya', 1235,  'active', '12.09.2021');
+let customerThree = new Customer('valya', 1236,  'not active', '12.09.2021');
+let customerFour = new Customer('masha', 1237,  'active', '12.09.2021');
+let customerFive = new Customer('olya', 1238,  'not active', '12.09.2021');
 
 customerOne.setDebitAccount('25.12.2023', 500, "UAH");
 customerOne.setDebitAccount('25.12.2023', 500, "UAH");
@@ -83,7 +83,7 @@ customerFour.setCreditAccount('25.12.2023', 150, 200, "USD");
 customerFive.setDebitAccount('25.12.2023', 500, "EUR");
 
 bank.push(customerOne, customerTwo, customerThree, customerFour, customerFive);
-console.log(bank)
+
 let creditDutyAllCustomers = async function() {
   let duty = 0;
 
@@ -209,7 +209,7 @@ function showCustomers() {
       let id = document.createElement('h4');
       id.innerHTML = 'ID: ' + item.codeId;
       let activity = document.createElement('h4');
-      activity.innerHTML = 'Activity: ' + (item.isActive ? 'active' : 'not active');
+      activity.innerHTML = 'Activity: ' + item.isActive;
       let debit = document.createElement('h4');
       let credit = document.createElement('h4');
       if (item.debitAccount.length) {
@@ -376,13 +376,10 @@ addCustomer.addEventListener("click", (e) => {
   let name = document.getElementById('inputName').value;
   let id = document.getElementById('inputID').value;
   let active = document.getElementById('selectFormAdd').value;
-  console.log(active)
-  // let data = document.getElementById('selectFormAdd');
-
   let customer = new Customer(name, id, active);
   bank.push(customer);
   renderAll();
-
+  document.querySelector('.formAdd').reset();
 })
 
 
