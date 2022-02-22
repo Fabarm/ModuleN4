@@ -55,11 +55,11 @@ class Customer {
   }
 }
 
-let customerOne = new Customer('vasya', 1234,  'active', '12.09.2021');
-let customerTwo = new Customer('petya', 1235,  'active', '12.09.2021');
-let customerThree = new Customer('valya', 1236,  'not active', '12.09.2021');
-let customerFour = new Customer('masha', 1237,  'active', '12.09.2021');
-let customerFive = new Customer('olya', 1238,  'not active', '12.09.2021');
+let customerOne = new Customer('vasya', 1234,  'active');
+let customerTwo = new Customer('petya', 1235,  'active');
+let customerThree = new Customer('valya', 1236,  'not active');
+let customerFour = new Customer('masha', 1237,  'active');
+let customerFive = new Customer('olya', 1238,  'not active');
 
 customerOne.setDebitAccount('25.12.2023', 500, "UAH");
 customerOne.setDebitAccount('25.12.2023', 500, "UAH");
@@ -281,9 +281,7 @@ function showFormDelete() {
   let selectFormDelete = document.createElement('select');
   selectFormDelete.id = 'selectFormDelete';
   selectFormDelete.name = 'formDelete';
-
   renderSelect(selectFormDelete);
-
   pSelectFormDelete.append(labelFormDelete, selectFormDelete);
   let btnDelete = document.createElement('button');
   btnDelete.id = 'btnDelete';
@@ -322,36 +320,47 @@ function showFormAddBankAccount() {
   let pSelectTypeAccount = document.createElement('p');
   pSelectTypeAccount.append(labelTypeAccount, selectTypeAccount);
 
-  let divDebit = document.createElement('div');
-  divDebit.className = 'divDebit';
-  let inputDebitDataAccount = document.createElement('input');
-  inputDebitDataAccount.id = 'inputDebitDataAccount';
-  inputDebitDataAccount.placeholder = 'Enter expiration date';
-  let inputDebitBalance = document.createElement('input');
-  inputDebitBalance.id = 'inputDebitBalance';
-  inputDebitBalance.placeholder = 'Enter balance customer';
-  divDebit.append(inputDebitDataAccount, inputDebitBalance);
-
+  let labelTypeCurrency = document.createElement('label');
+  labelTypeCurrency .innerHTML = 'Select type currency';
+  let selectTypeCurrency = document.createElement('select');
+  selectTypeCurrency.id = 'selectTypeCurrency';
+  selectTypeCurrency.name = 'formAddBankAccount';
+  let optionUAH = document.createElement('option');
+  optionUAH.value = 'UAH';
+  optionUAH.innerHTML = 'UAH';
+  let optionUSD = document.createElement('option');
+  optionUSD.value = 'USD';
+  optionUSD.innerHTML = 'USD';
+  let optionRUR= document.createElement('option');
+  optionRUR.value = 'RUR';
+  optionRUR.innerHTML = 'RUR';
+  let optionEUR = document.createElement('option');
+  optionEUR.value = 'EUR';
+  optionEUR.innerHTML = 'EUR';
+  selectTypeCurrency.append(optionUAH, optionUSD, optionRUR, optionEUR);
+  let pSelectTypeCurrency = document.createElement('p');
+  pSelectTypeCurrency.append(labelTypeCurrency, selectTypeCurrency);
+  let inputDataAccount = document.createElement('input');
+  inputDataAccount.id = 'inputDataAccount';
+  inputDataAccount.placeholder = 'Enter expiration date';
+  let inputBalance = document.createElement('input');
+  inputBalance.id = 'inputBalance';
+  inputBalance.placeholder = 'Enter balance customer';
   let divCredit = document.createElement('div');
   divCredit.className = 'divCredit';
-  let inputCreditDataAccount = document.createElement('input');
-  inputCreditDataAccount.id = 'inputCreditDataAccount';
-  inputCreditDataAccount.placeholder = 'Enter expiration date';
-  let inputCreditBalance = document.createElement('input');
-  inputCreditBalance.id = 'inputCreditBalance';
-  inputCreditBalance.placeholder = 'Enter balance customer';
   let inputCreditLimit = document.createElement('input');
   inputCreditLimit.id = 'inputCreditLimit';
   inputCreditLimit.placeholder = 'Enter credit limit';
-  divCredit.append(inputCreditDataAccount, inputCreditBalance, inputCreditLimit);
-
+  divCredit.append(inputCreditLimit);
   let btnAddBankAccount = document.createElement('button');
   btnAddBankAccount.id = 'btn_add_bank_account';
   btnAddBankAccount.innerHTML = 'Add bank account';
   fieldsetFormAddBankAccount.append(legendFormAddBankAccount,
     pSelectFormAddBankAccount,
     pSelectTypeAccount,
-    divDebit,
+    pSelectTypeCurrency,
+    inputDataAccount,
+    inputBalance,
     divCredit,
     btnAddBankAccount);
   formAddBankAccount.append(fieldsetFormAddBankAccount);
@@ -362,10 +371,8 @@ showFormAddBankAccount();
 let checkAccount = document.getElementById('selectTypeAccount');
 checkAccount.addEventListener('change', (e) => {
   if (checkAccount.value === 'credit') {
-    document.querySelector('.divDebit').style.display = 'none';
     document.querySelector('.divCredit').style.display = 'block';
   } else {
-    document.querySelector('.divDebit').style.display = 'block';
     document.querySelector('.divCredit').style.display = 'none';
   }
 })
@@ -393,7 +400,30 @@ deleteCustomer.addEventListener('click', (e) => {
       bank.splice(i, 1);
       renderAll();
     }
-  })
+  });
+})
+
+let addBankAccount = document.getElementById('btn_add_bank_account');
+addBankAccount.addEventListener('click', (e) => {
+  e.preventDefault();
+  let id = Number(document.getElementById('selectFormAddBankAccount').value);
+  let typeAccount = document.getElementById('selectTypeAccount').value;
+  let currency = document.getElementById('selectTypeCurrency').value;
+  let data = document.getElementById('inputDataAccount').value;
+  let balance = document.getElementById('inputBalance').value;
+  let limit = document.getElementById('inputCreditLimit').value;
+
+  bank.forEach((item, i)=> {
+    if (item.codeId === id) {
+      if (typeAccount === 'debit') {
+        item.setDebitAccount(data, balance, currency);
+      } else {
+        item.setCreditAccount(data, balance, limit, currency)
+      }
+      renderAll();
+      document.querySelector('.formAddBankAccount').reset();
+    }
+  });
 })
 
 function renderSelect(select) {
@@ -418,14 +448,3 @@ function renderAll() {
   selectFormAddBankAccount.innerHTML = '';
   renderSelect(selectFormAddBankAccount);
 }
-
-// function dell(id) {
-//   let a = document.querySelector('.customers_list_inner');
-//   bank.forEach(item => {
-//     if(item.codeId === id){
-//       item.setDebitAccount('25.12.2023', 500, "UAH");
-//       a.innerHTML = '';
-//       showCustomers();
-//     }
-//   })
-// }
