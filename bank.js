@@ -338,6 +338,16 @@ function showFormAddBankAccount() {
 }
 showFormAddBankAccount();
 
+let regName = /^[А-ЯA-Z][а-яa-zА-ЯA-Z\-]{0,}\s[А-ЯA-Z][а-яa-zА-ЯA-Z\-]{1,}(\s[А-ЯA-Z][а-яa-zА-ЯA-Z\-]{1,})?$/;
+let regID = /^[0-9]{13}$/;
+let regDate = /(0?[1-9]|[12][0-9]|3[01])[\/\-\.](0?[1-9]|1[012])[ \/\.\-]/;
+let regBalance = /^[0-9]{3,9}$/;
+let regLimit = /^[0-9]{3,6}$/;
+let error = document.createElement('div');
+let span = document.createElement('span');
+span.innerHTML = 'Incorrect data entered';
+error.append(span);
+
 let checkAccount = document.getElementById('selectTypeAccount');
 checkAccount.addEventListener('change', () => {
   if (checkAccount.value === 'credit') {
@@ -353,8 +363,15 @@ addCustomer.addEventListener('click', (event) => {
   let name = document.getElementById('inputName').value;
   let id = document.getElementById('inputID').value;
   let active = document.getElementById('selectFormAdd').value;
-  let customer = new Customer(name, id, active);
-  bank.push(customer);
+  if(error){
+    error.remove();
+  }
+  if (regName.test(name) && regID.test(id)) {
+    let customer = new Customer(name, id, active);
+    bank.push(customer);
+  } else {
+    addCustomer.before(error);
+  }
   renderAll();
   document.querySelector('.formAdd').reset();
 });
@@ -382,13 +399,23 @@ addBankAccount.addEventListener('click', (event) => {
   let data = document.getElementById('inputDataAccount').value;
   let balance = document.getElementById('inputBalance').value;
   let limit = document.getElementById('inputCreditLimit').value;
-
+  if(error){
+    error.remove();
+  }
   bank.forEach(item => {
     if (item.codeId === id) {
       if (typeAccount === 'debit') {
-        item.setDebitAccount(data, balance, currency);
+        if (regDate.test(data) && regBalance.test(balance)) {
+          item.setDebitAccount(data, balance, currency);
+        } else {
+          addBankAccount.before(error);
+        }
       } else {
-        item.setCreditAccount(data, balance, limit, currency);
+        if (regDate.test(data) && regBalance.test(balance) && regLimit.test(limit)) {
+          item.setCreditAccount(data, balance, limit, currency);
+        } else {
+          addBankAccount.before(error);
+        }
       }
       renderAll();
       document.querySelector('.formAddBankAccount').reset();
