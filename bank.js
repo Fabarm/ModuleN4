@@ -82,21 +82,17 @@ let totalFunds = async function() {
   await getExchangeRates()
     .then(rates => {
       bank.forEach((customer => {
-        if (customer.debitAccount.length > 0) {
-          customer.debitAccount.forEach(item => {
-            let temp = item.balance / rates.USD.sale;
-            cash += temp * rates[item.currency].sale;
-          });
-        }
+        customer.debitAccount.forEach(item => {
+          let temp = item.balance / rates.USD.sale;
+          cash += temp * rates[item.currency].sale;
+        });
 
-        if (customer.creditAccount.length > 0) {
-          customer.creditAccount.forEach(item => {
-            if (item.limit < item.balance) {
-              let temp = (item.limit - item.balance) / rates.USD.sale;
-              cash += temp * rates[item.currency].sale;
-            }
-          });
-        }
+        customer.creditAccount.forEach(item => {
+          if (item.limit < item.balance) {
+            let temp = (item.limit - item.balance) / rates.USD.sale;
+            cash += temp * rates[item.currency].sale;
+          }
+        });
       }));
     });
 
@@ -149,8 +145,7 @@ let sumCreditDutyCustomers = async function (isActive) {
 
 let container = document.createElement('div');
 container.className = 'container';
-let body = document.querySelector('body');
-body.append(container);
+document.body.append(container);
 let content = document.createElement('div');
 content.className = 'content';
 container.append(content);
@@ -325,7 +320,7 @@ addCustomer.addEventListener('click', (event) => {
   let name = document.getElementById('inputName').value;
   let id = document.getElementById('inputID').value;
   let active = document.getElementById('selectFormAdd').value;
-  if(error){
+  if (error) {
     error.remove();
   }
   if (regName.test(name) && regID.test(id)) {
@@ -337,7 +332,6 @@ addCustomer.addEventListener('click', (event) => {
   renderAll();
   formAdd.reset();
 });
-
 
 let deleteCustomer = document.getElementById('btnDelete');
 deleteCustomer.addEventListener('click', (event) => {
@@ -361,7 +355,7 @@ addBankAccount.addEventListener('click', (event) => {
   let data = document.getElementById('inputDataAccount').value;
   let balance = document.getElementById('inputBalance').value;
   let limit = document.getElementById('inputCreditLimit').value;
-  if(error){
+  if (error) {
     error.remove();
   }
   bank.forEach(item => {
